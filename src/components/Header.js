@@ -30,8 +30,8 @@ function Header() {
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
 
   const dispatch = useDispatch();
+  const id_uni = localStorage.getItem("flag") || "";
 
-  const userAuth = useSelector(getUserAuthSelector);
   function handleNotificationsClick() {
     setIsNotificationsMenuOpen(!isNotificationsMenuOpen);
   }
@@ -95,7 +95,9 @@ function Header() {
               aria-label="Account"
               aria-haspopup="true"
             >
-              <h3 className="mr-4 capitalize">{ localStorage.getItem('username')}</h3>
+              <h3 className="mr-4 capitalize">
+                {localStorage.getItem("username")}
+              </h3>
               <Avatar
                 className="align-middle"
                 src="https://res.cloudinary.com/i-h-c-n-ng/image/upload/v1649606919/avatar_4_otwwto.png"

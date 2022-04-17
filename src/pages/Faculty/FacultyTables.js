@@ -1,7 +1,20 @@
 import React, { useState, useEffect } from "react";
-
+import { useDispatch, useSelector } from "react-redux";
+import { ToastContainer, toast } from "react-toastify";
+import facultySlice, {
+  getFaculty,
+  deleteFaculty,
+  updateFaculty,
+  findFaculty,
+} from "./facultySlice";
+import notifyDeleteSlice from "../../components/NotifyDelete/notifyDeleteSlice";
+import {
+  getFacultySelector,
+  notifyDeleteSelector,
+  findFacultySelector,
+  findIdFacultySelector,
+} from "../../redux/selector";
 import PageTitle from "../../components/Typography/PageTitle";
-import SectionTitle from "../../components/Typography/SectionTitle";
 import {
   Table,
   TableHeader,
@@ -14,15 +27,24 @@ import {
   Button,
   Pagination,
 } from "@windmill/react-ui";
-import { EditIcon, TrashIcon , ViewIcon } from "../../icons";
 
-import response from "../../utils/demo/tableData";
+import response2 from "../../utils/demo/tableData";
 import FacultyModals from "../Faculty/FacultyModals";
-// make a copy of the data, for the second table
-const response2 = response.concat([]);
+import FacultyUpdateModals from "../Faculty/FacultyUpdateModal";
+import { unwrapResult } from "@reduxjs/toolkit";
+import NotifyDelete from "../../components/NotifyDelete/NotifyDelete";
+import ActionTable from "../../components/ActionTable";
 
 function FacultyTables() {
+  const dispatch = useDispatch();
+  const faculty = useSelector(getFacultySelector);
+  const facultyRecord = useSelector(findFacultySelector);
+  const facultyId = useSelector(findIdFacultySelector);
+
+  console.log(facultyRecord);
+  const response = faculty?.concat([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isModalUpdate, setIsModalUpdate] = useState(false);
 
   function openModal() {
     setIsModalOpen(true);
@@ -32,37 +54,121 @@ function FacultyTables() {
     setIsModalOpen(false);
   }
 
-  const [pageTable2, setPageTable2] = useState(1);
+  function closeModalUpdate() {
+    setIsModalUpdate(false);
+    dispatch(facultySlice.actions.clearState());
+  }
 
-  const [dataTable2, setDataTable2] = useState([]);
+  const [pageTable, setPageTable] = useState(1);
+
+  const [dataTable, setDataTable] = useState([]);
 
   // pagination setup
   const resultsPerPage = 10;
-  const totalResults = response.length;
-
-  // pagination change control
-  function onPageChangeTable2(p) {
-    setPageTable2(p);
-  }
+  const totalResults = response?.length;
 
   useEffect(() => {
-    setDataTable2(
-      response2.slice(
-        (pageTable2 - 1) * resultsPerPage,
-        pageTable2 * resultsPerPage
+    const fetchData = async () => {
+      try {
+        const results = await dispatch(getFaculty());
+        const data = unwrapResult(results);
+        console.log(data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    fetchData();
+  }, []);
+
+  useEffect(() => {
+    setDataTable(
+      response?.slice(
+        (pageTable - 1) * resultsPerPage,
+        pageTable * resultsPerPage
       )
     );
-  }, [pageTable2]);
+  }, [pageTable]);
+
+  const onPageChangeTable = (p) => {
+    setPageTable(p);
+  };
+
+  const openModalUpdate = async (id) => {
+    try {
+      const result = await dispatch(findFaculty(id));
+      const data = unwrapResult(result);
+      // dispatch(facultySlice.actions.updateFacultyAction(id));
+      if (data) {
+        setIsModalUpdate(true);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const openModalDelete = (id) => {
+    dispatch(facultySlice.actions.findIdDelete(id));
+    dispatch(notifyDeleteSlice.actions.open());
+  };
+
+  const handleCloseModal = () => {
+    dispatch(notifyDeleteSlice.actions.close());
+  };
+
+  const handleConfirmDelete = async (id) => {
+    try {
+      const results = await dispatch(deleteFaculty(id));
+      const data = unwrapResult(results);
+      await dispatch(facultySlice.actions.deleteFacultyAction(id));
+      handleCloseModal();
+      toast.success(`Xóa Thành công`, {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+    } catch (error) {
+      toast.error(`${error}`, {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+    }
+  };
 
   return (
     <>
+      <ToastContainer />
       <PageTitle>
         <div className="flex justify-between">
           <div>Khoa</div>
           <Button onClick={openModal}>Thêm khoa</Button>
         </div>
       </PageTitle>
-      <FacultyModals isModalOpen={isModalOpen}  closeModal={closeModal} />
+
+      {facultyId !== null && (
+        <NotifyDelete
+          handleConfirmDelete={handleConfirmDelete}
+          handleCloseModal={handleCloseModal}
+          id={facultyId[0].id_fac}
+
+        />
+      )}
+      <FacultyModals isModalOpen={isModalOpen} closeModal={closeModal} />
+      {facultyRecord !== null && (
+        <FacultyUpdateModals
+          isModalOpen={isModalUpdate}
+          openModalUpdate={openModalUpdate}
+          closeModal={closeModalUpdate}
+        />
+      )}
       <TableContainer className="mb-8">
         <Table>
           <TableHeader>
@@ -76,41 +182,35 @@ function FacultyTables() {
             </tr>
           </TableHeader>
           <TableBody>
-            {dataTable2.map((user, i) => (
+            {faculty?.map((item, i) => (
               <TableRow key={i}>
-                <TableCell>{i+1}</TableCell>
+                <TableCell>{i + 1}</TableCell>
                 <TableCell>
                   <div className="flex items-center text-sm">
                     <div>
-                      <p className="font-semibold">{user.name}</p>
+                      <p className="font-semibold capitalize">
+                        {item.name_fac}
+                      </p>
                       <p className="text-xs text-gray-600 dark:text-gray-400">
-                        {user.job}
+                        {item.id_uni}
                       </p>
                     </div>
                   </div>
                 </TableCell>
                 <TableCell>
-                  <span className="text-sm">$ {user.amount}</span>
+                  <span className="text-sm">{item.phone_fac}</span>
+                </TableCell>
+                <TableCell className="">
+                  <span className="text-sm ">{item.descipt_fac}</span>
                 </TableCell>
                 <TableCell>
-                  <Badge type={user.status}>{user.status}</Badge>
+                  <Badge>{item.img_fac}</Badge>
                 </TableCell>
-                <TableCell>
-                  <Badge type={user.status}>{user.status}</Badge>
-                </TableCell>
-                <TableCell>
-                  <div className="flex items-center space-x-4">
-                    <Button layout="link" size="icon" aria-label="Edit">
-                      <EditIcon className="w-5 h-5" aria-hidden="true" />
-                    </Button>
-                    <Button layout="link" size="icon" aria-label="Delete">
-                      <TrashIcon className="w-5 h-5" aria-hidden="true" />
-                    </Button>
-                    <Button layout="link" size="icon" aria-label="View">
-                      <ViewIcon className="w-5 h-5" aria-hidden="true" />
-                    </Button>
-                  </div>
-                </TableCell>
+                <ActionTable
+                  openModalUpdate={openModalUpdate}
+                  openModalDelete={openModalDelete}
+                  id={item.id_fac}
+                />
               </TableRow>
             ))}
           </TableBody>
@@ -119,7 +219,7 @@ function FacultyTables() {
           <Pagination
             totalResults={totalResults}
             resultsPerPage={resultsPerPage}
-            onChange={onPageChangeTable2}
+            onChange={onPageChangeTable}
             label="Table navigation"
           />
         </TableFooter>

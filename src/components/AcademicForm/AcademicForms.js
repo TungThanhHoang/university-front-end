@@ -5,8 +5,8 @@ import SectionTitle from "../Typography/SectionTitle";
 import { Input, HelperText, Label, Select, Textarea } from "@windmill/react-ui";
 
 
-function FacultyForms({ facultyForm, handleOnchange  }) {
-  const { name_fac, id_code, phone_fac, descipt_fac } = facultyForm;
+function AcademicForms({ academicForm, handleOnchange  }) {
+  const { name_fac, id_code, phone_fac, descript_fac } = academicForm;
   return (
     <>
       <PageTitle>Forms</PageTitle>
@@ -50,8 +50,8 @@ function FacultyForms({ facultyForm, handleOnchange  }) {
             <Textarea
               rows="3"
               placeholder="Miêu tả."
-              name="descipt_fac"
-              value={descipt_fac?.replace(/ +(?= )/g,'')}
+              name="descript_fac"
+              value={descript_fac?.replace(/ +(?= )/g,'')}
               onChange={handleOnchange}
             />
           </div>
@@ -61,4 +61,4 @@ function FacultyForms({ facultyForm, handleOnchange  }) {
   );
 }
 
-export default FacultyForms;
+export default AcademicForms;

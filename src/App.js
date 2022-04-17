@@ -25,6 +25,7 @@ function App() {
           <Route path="/create-account" component={CreateAccount} />
           <Route path="/forgot-password" component={ForgotPassword} />
           <ProtectRoute path="/app" component={Layout} />
+          <Redirect from="/" to="/login"  component={Login} />
         </Switch>
       </Router>
     </>

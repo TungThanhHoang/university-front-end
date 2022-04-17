@@ -8,6 +8,8 @@ const Buttons = lazy(() => import('../pages/Buttons'))
 const Modals = lazy(() => import('../pages/Modals'))
 const Tables = lazy(() => import('../pages/Tables'))
 const FacultyTables = lazy(() => import('../pages/Faculty/FacultyTables'))
+const AcademicTables = lazy(() => import('../pages/Academic/AcademicTables'))
+const JobTables = lazy(() => import('../pages/Job/JobTables'))
 const Page404 = lazy(() => import('../pages/404'))
 const Blank = lazy(() => import('../pages/Blank'))
 
@@ -30,11 +32,11 @@ const routes = [
   },
   {
     path: '/job',
-    component: Cards,
+    component: JobTables,
   },
   {
     path: '/academic',
-    component: Cards,
+    component: AcademicTables,
   },
   {
     path: '/major',

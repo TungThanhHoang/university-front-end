@@ -1,7 +1,8 @@
 import React, { useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { ToastContainer, toast } from "react-toastify";
-import facultySlice ,{ addFaculty, getFaculty } from "../Faculty/facultySlice";
+import { updateFaculty, getFaculty } from "../Faculty/facultySlice";
+import { findFacultySelector } from "../../redux/selector";
 
 import {
   Modal,
@@ -13,16 +14,18 @@ import {
 import FacultyForms from "../../components/FacultyForm/FacultyForms";
 import { unwrapResult } from "@reduxjs/toolkit";
 
-function FacultyModals({ isModalOpen, closeModal }) {
+function FacultyUpdateModal({ isModalOpen, closeModal }) {
   const dispatch = useDispatch();
+  const facultyRecord = useSelector(findFacultySelector);
   const [facultyForm, setFacultyForm] = useState({
-    name_fac: "",
-    id_code: "",
-    phone_fac: "",
-    descipt_fac: "",
+    id_fac: `${facultyRecord[0]?.id_fac}`,
+    name_fac: `${facultyRecord[0]?.name_fac}`,
+    id_code: `${facultyRecord[0]?.id_code}`,
+    phone_fac: `${facultyRecord[0]?.phone_fac}`,
+    descipt_fac: `${facultyRecord[0]?.descipt_fac}`,
   });
+  console.log(facultyForm);
   const { name_fac, id_code, phone_fac, descipt_fac } = facultyForm;
-
   const handleOnchange = (e) => {
     setFacultyForm({
       ...facultyForm,
@@ -31,7 +34,7 @@ function FacultyModals({ isModalOpen, closeModal }) {
     });
   };
 
-  const handleSubmit = async (event) => {
+  const handleUpdate = async (event) => {
     event.preventDefault();
     if (
       name_fac === "" ||
@@ -49,10 +52,10 @@ function FacultyModals({ isModalOpen, closeModal }) {
         progress: undefined,
       });
     try {
-      const result = await dispatch(addFaculty(facultyForm));
+      const result = await dispatch(updateFaculty(facultyForm));
       const data = unwrapResult(result);
       await dispatch(getFaculty());
-      toast.success(`Thêm Thành công`, {
+      toast.success(`Cập nhật Thành công`, {
         position: "top-right",
         autoClose: 3000,
         hideProgressBar: false,
@@ -62,7 +65,7 @@ function FacultyModals({ isModalOpen, closeModal }) {
         progress: undefined,
       });
       closeModal();
-      setFacultyForm("")
+      console.log(data);
     } catch (error) {
       toast.error(`${error}`, {
         position: "top-right",
@@ -79,7 +82,7 @@ function FacultyModals({ isModalOpen, closeModal }) {
     <>
       <ToastContainer />
       <Modal isOpen={isModalOpen} onClose={closeModal}>
-        <form onSubmit={(e) => handleSubmit(e)}>
+        <form onSubmit={(e) => handleUpdate(e)}>
           <ModalBody>
             <FacultyForms
               handleOnchange={handleOnchange}
@@ -91,7 +94,7 @@ function FacultyModals({ isModalOpen, closeModal }) {
               <Button layout="outline" onClick={closeModal}>
                 Hủy bỏ
               </Button>
-            </div>
+            </div>  
             <div className="hidden sm:block">
               <Button type="submit">Lưu thay đổi</Button>
             </div>
@@ -112,4 +115,4 @@ function FacultyModals({ isModalOpen, closeModal }) {
   );
 }
 
-export default FacultyModals;
+export default FacultyUpdateModal;

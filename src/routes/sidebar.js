@@ -15,10 +15,13 @@ const routes = [
     name: "Phòng ban",
   },
   {
-    path: "/app/employees",
     icon: "PeopleIcon",
     name: "Nhân viên",
     routes: [
+      {
+        path: "/app/employees",
+        name: "Nhân viên",
+      },
       {
         path: "/app/academic",
         name: "Học thuật",
