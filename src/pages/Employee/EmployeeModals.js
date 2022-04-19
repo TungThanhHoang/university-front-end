@@ -1,8 +1,13 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { ToastContainer, toast } from "react-toastify";
-import { updateJob, getJob } from "../Job/jobSlice";
-import { findJobSelector } from "../../redux/selector";
+import employeeSlice, {
+  addEmployee,
+  getEmployee,
+} from "../Employee/employeeSlice";
+import { getAcademic } from "../Academic/academicSlice";
+import { getJob } from "../Job/jobSlice";
+import { getJobSelector, getAcademicSelector } from "../../redux/selector";
 
 import {
   Modal,
@@ -11,28 +16,61 @@ import {
   ModalFooter,
   Button,
 } from "@windmill/react-ui";
-import JobForms from "../../components/JobForm/JobForms";
+import EmployeeForms from "../../components/EmployeeForm/EmployeeForm";
 import { unwrapResult } from "@reduxjs/toolkit";
 
-function JobUpdateModal({ isModalOpen, closeModal }) {
+function EmployeeModals({ isModalOpen, closeModal }) {
   const dispatch = useDispatch();
-  const jobRecord = useSelector(findJobSelector);
-  const [jobForm, setJobForm] = useState({
-    id_job: `${jobRecord[0]?.id_job}`,
-    name_job: `${jobRecord[0]?.name_job}`,
+  const job = useSelector(getJobSelector);
+  const academic = useSelector(getAcademicSelector);
+  const [employeeForm, setEmployeeForm] = useState({
+    id_emp: "",
+    name_emp: "",
+    gender_emp: "",
+    birthday_emp: "",
+    hometown_emp: "",
+    address_emp: "",
+    mobile_emp: "",
+    email_emp: "",
+    id_job: "",
+    id_academic: "",
   });
-  const { name_job ,id_job } = jobForm;
+  const {
+    name_emp,
+    gender_emp,
+    id_emp,
+    birthday_emp,
+    hometown_emp,
+    address_emp,
+    mobile_emp,
+    email_emp,
+    id_job,
+    id_academic,
+  } = employeeForm;
+
+  useEffect(() => {
+    Promise.all([dispatch(getAcademic()), dispatch(getJob())]);
+  }, []);
   const handleOnchange = (e) => {
-    setJobForm({
-      ...jobForm,
-      [e.target.name]: e.target.value
+    setEmployeeForm({
+      ...employeeForm,
+      [e.target.name]: e.target.value,
     });
   };
 
-  const handleUpdate = async (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
     if (
-      name_job === "" 
+      name_emp === "" ||
+      id_emp === "" ||
+      gender_emp === "" ||
+      birthday_emp === "" ||
+      hometown_emp === "" ||
+      address_emp === "" ||
+      mobile_emp === "" ||
+      email_emp === "" ||
+      id_job === "" ||
+      id_academic === ""
     )
       return toast.error("Hãy nhập đầy đủ thông tin!", {
         position: "top-right",
@@ -44,10 +82,10 @@ function JobUpdateModal({ isModalOpen, closeModal }) {
         progress: undefined,
       });
     try {
-      const result = await dispatch(updateJob(jobForm));
+      const result = await dispatch(addEmployee(employeeForm));
       const data = unwrapResult(result);
-      await dispatch(getJob());
-      toast.success(`Cập nhật Thành công`, {
+      await dispatch(getEmployee());
+      toast.success(`Thêm Thành công`, {
         position: "top-right",
         autoClose: 3000,
         hideProgressBar: false,
@@ -57,7 +95,7 @@ function JobUpdateModal({ isModalOpen, closeModal }) {
         progress: undefined,
       });
       closeModal();
-      console.log(data);
+      setEmployeeForm("");
     } catch (error) {
       toast.error(`${error}`, {
         position: "top-right",
@@ -74,11 +112,13 @@ function JobUpdateModal({ isModalOpen, closeModal }) {
     <>
       <ToastContainer />
       <Modal isOpen={isModalOpen} onClose={closeModal}>
-        <form onSubmit={(e) => handleUpdate(e)}>
+        <form onSubmit={(e) => handleSubmit(e)}>
           <ModalBody>
-            <JobForms
+            <EmployeeForms
               handleOnchange={handleOnchange}
-              jobForm={jobForm}
+              employeeForm={employeeForm}
+              job={job}
+              academic={academic}
             />
           </ModalBody>
           <ModalFooter>
@@ -86,7 +126,7 @@ function JobUpdateModal({ isModalOpen, closeModal }) {
               <Button layout="outline" onClick={closeModal}>
                 Hủy bỏ
               </Button>
-            </div>  
+            </div>
             <div className="hidden sm:block">
               <Button type="submit">Lưu thay đổi</Button>
             </div>
@@ -107,4 +147,4 @@ function JobUpdateModal({ isModalOpen, closeModal }) {
   );
 }
 
-export default JobUpdateModal;
+export default EmployeeModals;

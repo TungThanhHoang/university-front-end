@@ -177,7 +177,6 @@ function FacultyTables() {
               <TableCell>Khoa</TableCell>
               <TableCell>Số điện thoại</TableCell>
               <TableCell>Miêu tả</TableCell>
-              <TableCell>Trạng thái</TableCell>
               <TableCell>Hành động</TableCell>
             </tr>
           </TableHeader>
@@ -192,7 +191,7 @@ function FacultyTables() {
                         {item.name_fac}
                       </p>
                       <p className="text-xs text-gray-600 dark:text-gray-400">
-                        {item.id_uni}
+                        {item.id_code}
                       </p>
                     </div>
                   </div>
@@ -202,9 +201,6 @@ function FacultyTables() {
                 </TableCell>
                 <TableCell className="">
                   <span className="text-sm ">{item.descipt_fac}</span>
-                </TableCell>
-                <TableCell>
-                  <Badge>{item.img_fac}</Badge>
                 </TableCell>
                 <ActionTable
                   openModalUpdate={openModalUpdate}

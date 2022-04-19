@@ -30,11 +30,6 @@ function Header() {
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
 
   const dispatch = useDispatch();
-  const id_uni = localStorage.getItem("flag") || "";
-
-  function handleNotificationsClick() {
-    setIsNotificationsMenuOpen(!isNotificationsMenuOpen);
-  }
 
   function handleProfileClick() {
     setIsProfileMenuOpen(!isProfileMenuOpen);

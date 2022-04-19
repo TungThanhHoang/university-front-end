@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { ToastContainer, toast } from "react-toastify";
-import { updateJob, getJob } from "../Job/jobSlice";
-import { findJobSelector } from "../../redux/selector";
+import { updateEmployee, getEmployee } from "../Employee/employeeSlice";
+import { findEmployeeSelector } from "../../redux/selector";
 
 import {
   Modal,
@@ -11,20 +11,28 @@ import {
   ModalFooter,
   Button,
 } from "@windmill/react-ui";
-import JobForms from "../../components/JobForm/JobForms";
+import EmployeeForms from "../../components/EmployeeForm/EmployeeForm";
 import { unwrapResult } from "@reduxjs/toolkit";
 
-function JobUpdateModal({ isModalOpen, closeModal }) {
+function EmployeeUpdateModal({ isModalOpen, closeModal }) {
   const dispatch = useDispatch();
-  const jobRecord = useSelector(findJobSelector);
-  const [jobForm, setJobForm] = useState({
-    id_job: `${jobRecord[0]?.id_job}`,
-    name_job: `${jobRecord[0]?.name_job}`,
+  const employeeRecord = useSelector(findEmployeeSelector);
+  const [employeeForm, setEmployeeForm] = useState({
+    id_emp: `${employeeRecord[0]?.id_emp}`,
+    name_emp: `${employeeRecord[0]?.name_emp}`,
+    gender_emp: `${employeeRecord[0]?.gender_emp}`,
+    birthday_emp: `${employeeRecord[0]?.birthday_emp}`,
+    hometown_emp: `${employeeRecord[0]?.hometown_emp}`,
+    address_emp: `${employeeRecord[0]?.address_emp}`,
+    mobile_emp: `${employeeRecord[0]?.mobile_emp}`,
+    email_emp: `${employeeRecord[0]?.email_emp}`,
+    name_emp: `${employeeRecord[0]?.name_job}`,
+    name_academic: `${employeeRecord[0]?.name_academic}`,
   });
-  const { name_job ,id_job } = jobForm;
+  const { id_academic ,  name_emp , gender_emp  } = employeeForm;
   const handleOnchange = (e) => {
-    setJobForm({
-      ...jobForm,
+    setEmployeeForm({
+      ...employeeForm,
       [e.target.name]: e.target.value
     });
   };
@@ -32,7 +40,8 @@ function JobUpdateModal({ isModalOpen, closeModal }) {
   const handleUpdate = async (event) => {
     event.preventDefault();
     if (
-      name_job === "" 
+      name_emp === ""||
+      gender_emp === "" 
     )
       return toast.error("Hãy nhập đầy đủ thông tin!", {
         position: "top-right",
@@ -44,9 +53,9 @@ function JobUpdateModal({ isModalOpen, closeModal }) {
         progress: undefined,
       });
     try {
-      const result = await dispatch(updateJob(jobForm));
+      const result = await dispatch(updateEmployee(employeeForm));
       const data = unwrapResult(result);
-      await dispatch(getJob());
+      await dispatch(getEmployee());
       toast.success(`Cập nhật Thành công`, {
         position: "top-right",
         autoClose: 3000,
@@ -76,9 +85,9 @@ function JobUpdateModal({ isModalOpen, closeModal }) {
       <Modal isOpen={isModalOpen} onClose={closeModal}>
         <form onSubmit={(e) => handleUpdate(e)}>
           <ModalBody>
-            <JobForms
+            <EmployeeForms
               handleOnchange={handleOnchange}
-              jobForm={jobForm}
+              employeeorm={employeeForm}
             />
           </ModalBody>
           <ModalFooter>
@@ -107,4 +116,4 @@ function JobUpdateModal({ isModalOpen, closeModal }) {
   );
 }
 
-export default JobUpdateModal;
+export default EmployeeUpdateModal;

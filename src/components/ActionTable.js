@@ -24,7 +24,7 @@ function ActionTable({ openModalUpdate, id, openModalDelete }) {
 
   return (
     <>
-      <TableCell id={id}>
+      <TableCell id={id} className="">
         <div className="flex items-center space-x-4">
           <Button
             layout="link"

@@ -10,6 +10,7 @@ const Tables = lazy(() => import('../pages/Tables'))
 const FacultyTables = lazy(() => import('../pages/Faculty/FacultyTables'))
 const AcademicTables = lazy(() => import('../pages/Academic/AcademicTables'))
 const JobTables = lazy(() => import('../pages/Job/JobTables'))
+const EmployeeTables = lazy(() => import('../pages/Employee/EmployeeTables'))
 const Page404 = lazy(() => import('../pages/404'))
 const Blank = lazy(() => import('../pages/Blank'))
 
@@ -28,7 +29,7 @@ const routes = [
   },
   {
     path: '/employees',
-    component: Cards,
+    component: EmployeeTables,
   },
   {
     path: '/job',

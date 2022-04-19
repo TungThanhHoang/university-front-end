@@ -24,7 +24,7 @@ const routes = [
       },
       {
         path: "/app/academic",
-        name: "Học thuật",
+        name: "Bằng cấp",
       },
       {
         path: "/app/job",
@@ -56,34 +56,7 @@ const routes = [
     path: "/app/marks",
     icon: "TablesIcon",
     name: "Điểm",
-  },
-  {
-    icon: "PagesIcon",
-    name: "Pages",
-    routes: [
-      // submenu
-      {
-        path: "/login",
-        name: "Login",
-      },
-      {
-        path: "/create-account",
-        name: "Create account",
-      },
-      {
-        path: "/forgot-password",
-        name: "Forgot password",
-      },
-      {
-        path: "/app/404",
-        name: "404",
-      },
-      {
-        path: "/app/blank",
-        name: "Blank",
-      },
-    ],
-  },
+  }
 ];
 
 export default routes;

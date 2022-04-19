@@ -16,3 +16,17 @@ export const findIdFacultySelector = (state) => state.faculty.idFaculty;
 // Notify Confirm Delete
 export const notifyDeleteSelector = (state) => state.notifyDelete.isOpen;
 
+// Selector Job
+export const getJobSelector = (state) => state.job.job;
+export const findJobSelector = (state) => state.job.jobRecord;
+export const findIdJobSelector = (state) => state.job.idJob;
+
+// Selector Academic
+export const getAcademicSelector = (state) => state.academic.academic;
+export const findAcademicSelector = (state) => state.academic.academicRecord;
+export const findIdAcademicSelector = (state) => state.academic.idAcademic;
+
+// Selector Employee
+export const getEmployeeSelector = (state) => state.employee.employee;
+export const findEmployeeSelector = (state) => state.employee.employeeRecord;
+export const findIdEmployeeSelector = (state) => state.employee.idEmployee;

@@ -4,57 +4,33 @@ import PageTitle from "../Typography/PageTitle";
 import SectionTitle from "../Typography/SectionTitle";
 import { Input, HelperText, Label, Select, Textarea } from "@windmill/react-ui";
 
-
-function AcademicForms({ academicForm, handleOnchange  }) {
-  const { name_fac, id_code, phone_fac, descript_fac } = academicForm;
+function AcademicForms({ academicForm, handleOnchange }) {
+  const { name_academic, code_academic } = academicForm;
   return (
     <>
       <PageTitle>Forms</PageTitle>
       <div className="px-4 py-3 mb-8 bg-white rounded-lg shadow-md dark:bg-gray-800">
         <Label>
-          <span>Tên khoa</span>
+          <span>Tên bằng cấp</span>
           <Input
             className="mt-1"
-            placeholder="Khoa"
-            name="name_fac"
-            value={name_fac?.replace(/ +(?= )/g,'')}
+            placeholder="Bằng cấp"
+            name="name_academic"
+            value={name_academic?.replace(/ +(?= )/g, "")}
             onChange={handleOnchange}
           />
         </Label>
-
         <div className="flex justify-between flex-col sm:flex-row">
           <Label className="mt-4">
-            <span>Mã khoa</span>
+            <span>Mã bằng cấp</span>
             <Input
               className="mt-1"
               placeholder="Code"
-              name="id_code"
-              value={id_code?.replace(/ +(?= )/g,'')}
+              name="code_academic"
+              value={code_academic?.replace(/ +(?= )/g, "")}
               onChange={handleOnchange}
             />
           </Label>
-          <Label className="mt-4">
-            <span>Số điện thoại</span>
-            <Input
-              className="mt-1"
-              placeholder="+84"
-              name="phone_fac"
-              value={phone_fac?.replace(/ +(?= )/g,'')}
-              onChange={handleOnchange}
-            />
-          </Label>
-        </div>
-        <div className="mt-4">
-          <Label>Miêu tả</Label>
-          <div className="mt-2">
-            <Textarea
-              rows="3"
-              placeholder="Miêu tả."
-              name="descript_fac"
-              value={descript_fac?.replace(/ +(?= )/g,'')}
-              onChange={handleOnchange}
-            />
-          </div>
         </div>
       </div>
     </>

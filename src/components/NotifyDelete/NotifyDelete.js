@@ -10,7 +10,6 @@ function NotifyDelete({ handleConfirmDelete , handleCloseModal , id}) {
     <Modal isOpen={isModalOpen} onClose={handleCloseModal}>
       <ModalBody>
       Bạn có chắc chắn muốn xóa không?
-      { id }
       </ModalBody>
       <ModalFooter>
         <Button

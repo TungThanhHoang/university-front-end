@@ -1,13 +1,17 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { ToastContainer, toast } from "react-toastify";
-import jobSlice, { getJob, deleteJob, updateJob, findJob } from "./jobSlice";
+import employeeSlice, {
+  getEmployee,
+  deleteEmployee,
+  updateEmployee,
+  findEmployee,
+} from "./employeeSlice";
 import notifyDeleteSlice from "../../components/NotifyDelete/notifyDeleteSlice";
 import {
-  getJobSelector,
-  notifyDeleteSelector,
-  findJobSelector,
-  findIdJobSelector,
+  getEmployeeSelector,
+  findEmployeeSelector,
+  findIdEmployeeSelector,
 } from "../../redux/selector";
 import PageTitle from "../../components/Typography/PageTitle";
 import {
@@ -24,20 +28,19 @@ import {
 } from "@windmill/react-ui";
 
 import response2 from "../../utils/demo/tableData";
-import JobModals from "../Job/JobModals";
-import JobUpdateModals from "../Job/JobUpdateModal";
+import EmployeeModals from "../Employee/EmployeeModals";
+import EmployeeUpdateModals from "../Employee/EmployeeUpdateModal";
 import { unwrapResult } from "@reduxjs/toolkit";
 import NotifyDelete from "../../components/NotifyDelete/NotifyDelete";
 import ActionTable from "../../components/ActionTable";
 
-function JobTables() {
+function EmployeeTables() {
   const dispatch = useDispatch();
-  const job = useSelector(getJobSelector);
-  const jobRecord = useSelector(findJobSelector);
-  const jobId = useSelector(findIdJobSelector);
+  const employee = useSelector(getEmployeeSelector);
+  const employeeRecord = useSelector(findEmployeeSelector);
+  const employeeId = useSelector(findIdEmployeeSelector);
 
-  console.log(jobRecord);
-  const response = job?.concat([]);
+  const response = employee?.concat([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isModalUpdate, setIsModalUpdate] = useState(false);
 
@@ -51,7 +54,7 @@ function JobTables() {
 
   function closeModalUpdate() {
     setIsModalUpdate(false);
-    dispatch(jobSlice.actions.clearState());
+    dispatch(employeeSlice.actions.clearState());
   }
 
   const [pageTable, setPageTable] = useState(1);
@@ -65,7 +68,7 @@ function JobTables() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const results = await dispatch(getJob());
+        const results = await dispatch(getEmployee());
         const data = unwrapResult(results);
         console.log(data);
       } catch (error) {
@@ -90,7 +93,7 @@ function JobTables() {
 
   const openModalUpdate = async (id) => {
     try {
-      const result = await dispatch(findJob(id));
+      const result = await dispatch(findEmployee(id));
       const data = unwrapResult(result);
       // dispatch(facultySlice.actions.updateFacultyAction(id));
       if (data) {
@@ -102,7 +105,7 @@ function JobTables() {
   };
 
   const openModalDelete = (id) => {
-    dispatch(jobSlice.actions.findIdDelete(id));
+    dispatch(employeeSlice.actions.findIdDelete(id));
     dispatch(notifyDeleteSlice.actions.open());
   };
 
@@ -110,11 +113,16 @@ function JobTables() {
     dispatch(notifyDeleteSlice.actions.close());
   };
 
+  const formatDate = (birthday) => {
+    let data = new Date(birthday);
+    return data.toLocaleDateString();
+  };
+
   const handleConfirmDelete = async (id) => {
     try {
-      const results = await dispatch(deleteJob(id));
+      const results = await dispatch(deleteEmployee(id));
       const data = unwrapResult(results);
-      await dispatch(jobSlice.actions.deleteJobAction(id));
+      await dispatch(employeeSlice.actions.deleteEmployeeAction(id));
       handleCloseModal();
       toast.success(`Xóa Thành công`, {
         position: "top-right",
@@ -143,52 +151,115 @@ function JobTables() {
       <ToastContainer />
       <PageTitle>
         <div className="flex justify-between">
-          <div>Công việc</div>
-          <Button onClick={openModal}>Thêm công việc</Button>
+          <div>Bằng cấp</div>
+          <Button onClick={openModal}>Thêm bằng cấp</Button>
         </div>
       </PageTitle>
 
-      {jobId !== null && (
+      {employeeId !== null && (
         <NotifyDelete
           handleConfirmDelete={handleConfirmDelete}
           handleCloseModal={handleCloseModal}
-          id={jobId[0].id_job}
+          id={employeeId[0].id_emp}
         />
       )}
-      <JobModals isModalOpen={isModalOpen} closeModal={closeModal} />
-      {jobRecord !== null && (
-        <JobUpdateModals
+      <EmployeeModals isModalOpen={isModalOpen} closeModal={closeModal} />
+      {employeeRecord !== null && (
+        <EmployeeUpdateModals
           isModalOpen={isModalUpdate}
           openModalUpdate={openModalUpdate}
           closeModal={closeModalUpdate}
         />
       )}
-      <TableContainer className="mb-8 ">
+      <TableContainer className="mb-8">
         <Table>
           <TableHeader>
             <tr>
               <TableCell>STT</TableCell>
-              <TableCell>Công việc</TableCell>
+              <TableCell>Tên Nhân Viên</TableCell>
+              <TableCell>Giới tính</TableCell>
+              <TableCell>Ngày Sinh</TableCell>
+              <TableCell>Quê Quán</TableCell>
+              <TableCell>Địa chỉ hiện tại</TableCell>
+              <TableCell>Học vấn</TableCell>
+              <TableCell>Số điện thoại</TableCell>
+              <TableCell>Email</TableCell>
               <TableCell>Hành động</TableCell>
             </tr>
           </TableHeader>
           <TableBody>
-            {job?.map((item, i) => (
+            {employee?.map((item, i) => (
               <TableRow key={i}>
                 <TableCell>{i + 1}</TableCell>
-                <TableCell >
+                <TableCell>
                   <div className="flex items-center text-sm">
                     <div>
                       <p className="font-semibold capitalize">
-                        {item.name_job}
+                        {item.name_emp}
                       </p>
+                      <p className="text-xs text-gray-600 dark:text-gray-400">
+                        {item.id_emp}
+                      </p>
+                    </div>
+                  </div>
+                </TableCell>
+                <TableCell>
+                  <div className="flex items-center text-sm">
+                    <div>
+                      <p className=" capitalize ">{item.gender_emp}</p>
+                    </div>
+                  </div>
+                </TableCell>
+                <TableCell>
+                  <div className="flex items-center text-sm">
+                    <div>
+                      <p className=" capitalize">
+                        {formatDate(item.birthday_emp)}
+                      </p>
+                    </div>
+                  </div>
+                </TableCell>
+                <TableCell>
+                  <div className="flex items-center text-sm">
+                    <div>
+                      <p className=" capitalize">{item.hometown_emp}</p>
+                    </div>
+                  </div>
+                </TableCell>
+                <TableCell>
+                  <div className="flex items-center text-sm">
+                    <div>
+                      <p className=" capitalize">{item.address_emp}</p>
+                    </div>
+                  </div>
+                </TableCell>
+                <TableCell>
+                  <div className="flex items-center text-sm">
+                    <div>
+                      <p className=" capitalize">{item.name_academic}</p>
+                      <p className=" capitalize">{item.name_job}</p>
+                    </div>
+                  </div>
+                </TableCell>
+                <TableCell>
+                  <div className="flex items-center text-sm">
+                    <div>
+                      <p className=" capitalize">{item.mobile_emp}</p>
+                    </div>
+                  </div>
+                </TableCell>
+                <TableCell>
+                  <div className="flex items-center text-sm">
+                    <div>
+                      <p className="">{item.email_emp}</p>
+
                     </div>
                   </div>
                 </TableCell>
                 <ActionTable
                   openModalUpdate={openModalUpdate}
                   openModalDelete={openModalDelete}
-                  id={item.id_job}
+                  id={item.id_academic}
                 />
               </TableRow>
             ))}
@@ -207,4 +278,4 @@ function JobTables() {
   );
 }
 
-export default JobTables;
+export default EmployeeTables;
