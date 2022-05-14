@@ -1,11 +1,9 @@
-import React, { useState ,useEffect } from "react";
+import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { ToastContainer, toast } from "react-toastify";
-import { updateEmployee, getEmployee } from "../Employee/employeeSlice";
-import { findEmployeeSelector } from "../../redux/selector";
-import { getAcademic } from "../Academic/academicSlice";
-import { getJob } from "../Job/jobSlice";
-import { getJobSelector, getAcademicSelector } from "../../redux/selector";
+import { updateDepartment, getDepartment } from "../Department/departmentSlice";
+import { findDepartmentSelector } from "../../redux/selector";
+
 import {
   Modal,
   ModalHeader,
@@ -13,46 +11,36 @@ import {
   ModalFooter,
   Button,
 } from "@windmill/react-ui";
-import EmployeeForms from "../../components/EmployeeForm/EmployeeForm";
+import DepartmentForms from "../../components/DepartmentForm/DepartmentForms";
 import { unwrapResult } from "@reduxjs/toolkit";
 
-function EmployeeUpdateModal({ isModalOpen, closeModal }) {
+function DepartmentUpdateModal({ isModalOpen, closeModal }) {
   const dispatch = useDispatch();
-  const job = useSelector(getJobSelector);
-  const academic = useSelector(getAcademicSelector);
-  const employeeRecord = useSelector(findEmployeeSelector);
-  const [employeeForm, setEmployeeForm] = useState({
-    id_emp: `${employeeRecord[0]?.id_emp.trim()}`,
-    name_emp: `${employeeRecord[0]?.name_emp}`,
-    gender_emp: `${employeeRecord[0]?.gender_emp.trim()}`,
-    birthday_emp: `${employeeRecord[0]?.birthday_emp}`,
-    hometown_emp: `${employeeRecord[0]?.hometown_emp}`,
-    address_emp: `${employeeRecord[0]?.address_emp}`,
-    mobile_emp: `${employeeRecord[0]?.mobile_emp}`,
-    email_emp: `${employeeRecord[0]?.email_emp}`,
-    name_job: `${employeeRecord[0]?.name_job}`,
-    id_job: `${employeeRecord[0]?.id_job}`,
-    name_academic: `${employeeRecord[0]?.name_academic}`,
-    id_academic: `${employeeRecord[0]?.id_academic}`,
+  const departmentRecord = useSelector(findDepartmentSelector);
+  const [departmentForm, setDepartmentForm] = useState({
+    id_dep: `${departmentRecord[0]?.id_dep}`,
+    name_dep: `${departmentRecord[0]?.name_dep}`,
+    id_code: `${departmentRecord[0]?.id_code}`,
+    phone_dep: `${departmentRecord[0]?.phone_dep}`,
+    descript_dep: `${departmentRecord[0]?.descript_dep}`,
   });
-  console.log(employeeForm)
-
-  useEffect(() => {
-    Promise.all([dispatch(getAcademic()), dispatch(getJob())]);
-  }, []);
-  const { id_academic ,  name_emp , gender_emp  } = employeeForm;
+  console.log(departmentForm);
+  const { name_dep, id_code, phone_dep, descript_dep } = departmentForm;
   const handleOnchange = (e) => {
-    setEmployeeForm({
-      ...employeeForm,
-      [e.target.name]: e.target.value
+    setDepartmentForm({
+      ...departmentForm,
+      [e.target.name]: e.target.value,
+      flag: localStorage.getItem("flag").replace(/ /g, ""),
     });
   };
 
   const handleUpdate = async (event) => {
     event.preventDefault();
     if (
-      name_emp === ""||
-      gender_emp === "" 
+      name_dep === "" ||
+      phone_dep === "" ||
+      id_code === "" ||
+      descript_dep === ""
     )
       return toast.error("Hãy nhập đầy đủ thông tin!", {
         position: "top-right",
@@ -64,9 +52,9 @@ function EmployeeUpdateModal({ isModalOpen, closeModal }) {
         progress: undefined,
       });
     try {
-      const result = await dispatch(updateEmployee(employeeForm));
+      const result = await dispatch(updateDepartment(departmentForm));
       const data = unwrapResult(result);
-      await dispatch(getEmployee());
+      await dispatch(getDepartment());
       toast.success(`Cập nhật Thành công`, {
         position: "top-right",
         autoClose: 3000,
@@ -79,7 +67,7 @@ function EmployeeUpdateModal({ isModalOpen, closeModal }) {
       closeModal();
       console.log(data);
     } catch (error) {
-      toast.error(`${error.msg}`, {
+      toast.error(`${error}`, {
         position: "top-right",
         autoClose: 3000,
         hideProgressBar: false,
@@ -96,11 +84,9 @@ function EmployeeUpdateModal({ isModalOpen, closeModal }) {
       <Modal isOpen={isModalOpen} onClose={closeModal}>
         <form onSubmit={(e) => handleUpdate(e)}>
           <ModalBody>
-            <EmployeeForms
+            <DepartmentForms
               handleOnchange={handleOnchange}
-              employeeForm={employeeForm}
-              job={job}
-              academic={academic}
+              departmentForm={departmentForm}
             />
           </ModalBody>
           <ModalFooter>
@@ -129,4 +115,4 @@ function EmployeeUpdateModal({ isModalOpen, closeModal }) {
   );
 }
 
-export default EmployeeUpdateModal;
+export default DepartmentUpdateModal;

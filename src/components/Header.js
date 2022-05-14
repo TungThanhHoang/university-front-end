@@ -2,7 +2,10 @@ import React, { useContext, useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { SidebarContext } from "../context/SidebarContext";
 import { getUserAuthSelector } from "../redux/selector";
-import authLoginSlice, { getUser } from "../pages/Login/loginSlice";
+import authLoginSlice, {
+  getUser,
+  getUserUniversityMain,
+} from "../pages/Login/loginSlice";
 import {
   SearchIcon,
   MoonIcon,
@@ -34,13 +37,19 @@ function Header() {
   function handleProfileClick() {
     setIsProfileMenuOpen(!isProfileMenuOpen);
   }
-
-  useEffect(() => {
-    const getUsername = async () => {
+  const renderUser = async () =>{
+    const flag = await localStorage.getItem("flag") && localStorage.getItem("flag");
+    console.log(flag);
+    if(flag !== "UDN"){
       await dispatch(getUser());
-    };
-    getUsername();
-  }, []);
+    } else {
+      await dispatch(getUserUniversityMain());
+    }
+  }
+
+  // useEffect(() => {
+  //   renderUser();
+  // }, []);
 
   const handleLogout = () => {
     dispatch(authLoginSlice.actions.logout());
@@ -63,7 +72,7 @@ function Header() {
             </div>
             <Input
               className="pl-8 text-gray-700"
-              placeholder="Search for projects"
+              placeholder="Tìm kiếm"
               aria-label="Search"
             />
           </div>

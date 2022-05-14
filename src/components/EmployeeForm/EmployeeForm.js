@@ -6,7 +6,7 @@ import { Input, HelperText, Label, Select, Textarea } from "@windmill/react-ui";
 
 function EmployeeForms({ employeeForm, handleOnchange , job , academic}) {
  
-
+console.log(employeeForm)
   const {
     id_emp,
     name_emp,
@@ -49,11 +49,11 @@ function EmployeeForms({ employeeForm, handleOnchange , job , academic}) {
           <Label>Giới tính</Label>
           <div className="mt-2">
             <Label radio>
-              <Input type="radio" value="Nam" name="gender_emp" checked={gender_emp === 'Nam'} onChange={handleOnchange}/>
+              <Input type="radio" value="Nam" name="gender_emp" checked={gender_emp?.trim().toLowerCase() === 'nam'} onChange={handleOnchange}/>
               <span className="ml-2">Nam</span>
             </Label>
             <Label className="ml-6" radio>
-              <Input type="radio" value="Nữ" name="gender_emp" checked={gender_emp === 'Nữ'} onChange={handleOnchange}/>
+              <Input type="radio" value="Nữ" name="gender_emp" checked={gender_emp?.trim().toLowerCase() === 'nữ'} onChange={handleOnchange}/>
               <span className="ml-2">Nữ</span>
             </Label>
           </div>

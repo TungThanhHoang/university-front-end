@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { ToastContainer, toast } from "react-toastify";
-import academicSlice, { getAcademic, deleteAcademic, updateAcademic, findAcademic } from "./academicSlice";
+import memberUniversitySlice, {
+  getMemUniversity,
+  findMemUniversity,
+} from "./memberUniversitySlice";
 import notifyDeleteSlice from "../../components/NotifyDelete/notifyDeleteSlice";
 import {
-  getAcademicSelector,
-  findAcademicSelector,
-  findIdAcademicSelector,
+  getMemUniversitySelector,
+  findMemUniversitySelector,
 } from "../../redux/selector";
 import PageTitle from "../../components/Typography/PageTitle";
 import {
@@ -20,22 +22,21 @@ import {
   Badge,
   Button,
   Pagination,
+  Avatar
 } from "@windmill/react-ui";
 
 import response2 from "../../utils/demo/tableData";
-import AcademicModals from "../Academic/AcademicModals";
-import AcademicUpdateModals from "../Academic/AcademicUpdateModals";
+import MemberUniversityModals from "../MemberUniversity/MemberUniversityModals";
+import MemberUniversityUpdateModal from "../MemberUniversity/MemberUniversityUpdateModal";
 import { unwrapResult } from "@reduxjs/toolkit";
 import NotifyDelete from "../../components/NotifyDelete/NotifyDelete";
 import ActionTable from "../../components/ActionTable";
 
-function AcademicTables() {
+function MemberUniversityTables() {
   const dispatch = useDispatch();
-  const academic = useSelector(getAcademicSelector);
-  const academicRecord = useSelector(findAcademicSelector);
-  const academicId = useSelector(findIdAcademicSelector);
-
-  const response = academic?.concat([]);
+  const memUniversity = useSelector(getMemUniversitySelector);
+  const memUniversityRecord = useSelector(findMemUniversitySelector);
+  const response = memUniversity?.concat([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isModalUpdate, setIsModalUpdate] = useState(false);
 
@@ -49,7 +50,7 @@ function AcademicTables() {
 
   function closeModalUpdate() {
     setIsModalUpdate(false);
-    dispatch(academicSlice.actions.clearState());
+    dispatch(memberUniversitySlice.actions.clearState());
   }
 
   const [pageTable, setPageTable] = useState(1);
@@ -63,9 +64,8 @@ function AcademicTables() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const results = await dispatch(getAcademic());
+        const results = await dispatch(getMemUniversity());
         const data = unwrapResult(results);
-        console.log(data);
       } catch (error) {
         console.log(error);
       }
@@ -88,9 +88,10 @@ function AcademicTables() {
 
   const openModalUpdate = async (id) => {
     try {
-      const result = await dispatch(findAcademic(id));
+      const result = await dispatch(findMemUniversity(id.replace(/ /g, "")));
       const data = unwrapResult(result);
       // dispatch(facultySlice.actions.updateFacultyAction(id));
+      console.log(data);
       if (data) {
         setIsModalUpdate(true);
       }
@@ -99,41 +100,9 @@ function AcademicTables() {
     }
   };
 
-  const openModalDelete = (id) => {
-    dispatch(academicSlice.actions.findIdDelete(id));
-    dispatch(notifyDeleteSlice.actions.open());
-  };
-
-  const handleCloseModal = () => {
-    dispatch(notifyDeleteSlice.actions.close());
-  };
-
-  const handleConfirmDelete = async (id) => {
-    try {
-      const results = await dispatch(deleteAcademic(id));
-      const data = unwrapResult(results);
-      await dispatch(academicSlice.actions.deleteAcademicAction(id));
-      handleCloseModal();
-      toast.success(`Xóa Thành công`, {
-        position: "top-right",
-        autoClose: 3000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-      });
-    } catch (error) {
-      toast.error(`${error.msg}`, {
-        position: "top-right",
-        autoClose: 3000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-      });
-    }
+  const formatDate = (birthday) => {
+    let data = new Date(birthday);
+    return data.toLocaleDateString();
   };
 
   return (
@@ -141,62 +110,74 @@ function AcademicTables() {
       <ToastContainer />
       <PageTitle>
         <div className="flex justify-between">
-          <div>Bằng cấp</div>
-          <Button onClick={openModal}>Thêm bằng cấp</Button>
+          <div>Đơn vị thành viên</div>
+          <Button onClick={openModal}>Thêm</Button>
         </div>
       </PageTitle>
-
-      {academicId !== null && (
-        <NotifyDelete
-          handleConfirmDelete={handleConfirmDelete}
-          handleCloseModal={handleCloseModal}
-          id={academicId[0].id_academic}
-        />
-      )}
-      <AcademicModals isModalOpen={isModalOpen} closeModal={closeModal} />
-      {academicRecord !== null && (
-        <AcademicUpdateModals
+      {/* <EmployeeModals isModalOpen={isModalOpen} closeModal={closeModal} /> */}
+      {memUniversityRecord !== null && (
+        <MemberUniversityUpdateModal
           isModalOpen={isModalUpdate}
           openModalUpdate={openModalUpdate}
           closeModal={closeModalUpdate}
         />
       )}
+
       <TableContainer className="mb-8">
         <Table>
           <TableHeader>
             <tr>
               <TableCell>STT</TableCell>
-              <TableCell>Tên bằng cấp</TableCell>
-              <TableCell>Mã bằng cấp</TableCell>
+              <TableCell>Đơn vị</TableCell>
+              <TableCell>Địa chỉ</TableCell>
+              <TableCell>Số điện thoại</TableCell>
+              <TableCell>Website</TableCell>
               <TableCell>Hành động</TableCell>
             </tr>
           </TableHeader>
           <TableBody>
-            {academic?.map((item, i) => (
-              <TableRow key={i}>
+            {memUniversity?.map((item, i) => (
+              <TableRow key={item.id_uni}>
                 <TableCell>{i + 1}</TableCell>
-                <TableCell >
+                <TableCell>
                   <div className="flex items-center text-sm">
+                    <Avatar
+                      className="hidden mr-3 md:block"
+                      src={item.img_uni}
+                      alt=""
+                    />
                     <div>
-                      <p className="font-semibold capitalize">
-                        {item.name_academic}
+                      <p className="font-semibold">{item.name_vn_uni}</p>
+                      <p className="text-xs text-gray-600 dark:text-gray-400">
+                        {item.id_uni}
                       </p>
                     </div>
                   </div>
                 </TableCell>
-                <TableCell >
+                <TableCell>
                   <div className="flex items-center text-sm">
                     <div>
-                      <p className=" capitalize">
-                        {item.code_academic}
-                      </p>
+                      <p className=" capitalize ">{item.address_uni}</p>
+                    </div>
+                  </div>
+                </TableCell>
+                <TableCell>
+                  <div className="flex items-center text-sm">
+                    <div>
+                      <p className=" capitalize">{item.phone_uni}</p>
+                    </div>
+                  </div>
+                </TableCell>
+                <TableCell>
+                  <div className="flex items-center text-sm">
+                    <div>
+                      <p className="lowercase">{item.website_uni}</p>
                     </div>
                   </div>
                 </TableCell>
                 <ActionTable
                   openModalUpdate={openModalUpdate}
-                  openModalDelete={openModalDelete}
-                  id={item.id_academic}
+                  id={item.id_uni.replace(/ +(?= )/g, "")}
                 />
               </TableRow>
             ))}
@@ -215,4 +196,4 @@ function AcademicTables() {
   );
 }
 
-export default AcademicTables;
+export default MemberUniversityTables;

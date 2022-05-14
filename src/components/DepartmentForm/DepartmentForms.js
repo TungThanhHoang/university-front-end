@@ -5,8 +5,8 @@ import SectionTitle from "../Typography/SectionTitle";
 import { Input, HelperText, Label, Select, Textarea } from "@windmill/react-ui";
 
 
-function FacultyForms({ facultyForm, handleOnchange  }) {
-  const { name_fac, id_code, phone_fac, descipt_fac } = facultyForm;
+function DepartmentForms({ departmentForm, handleOnchange  }) {
+  const { name_dep, id_code, phone_dep, descript_dep } = departmentForm;
   return (
     <>
       <PageTitle>Forms</PageTitle>
@@ -16,8 +16,8 @@ function FacultyForms({ facultyForm, handleOnchange  }) {
           <Input
             className="mt-1"
             placeholder="Khoa"
-            name="name_fac"
-            value={name_fac?.replace(/ +(?= )/g,'')}
+            name="name_dep"
+            value={name_dep?.replace(/ +(?= )/g,'')}
             onChange={handleOnchange}
           />
         </Label>
@@ -38,8 +38,8 @@ function FacultyForms({ facultyForm, handleOnchange  }) {
             <Input
               className="mt-1"
               placeholder="+84"
-              name="phone_fac"
-              value={phone_fac?.replace(/ +(?= )/g,'')}
+              name="phone_dep"
+              value={phone_dep?.replace(/ +(?= )/g,'')}
               onChange={handleOnchange}
             />
           </Label>
@@ -50,8 +50,8 @@ function FacultyForms({ facultyForm, handleOnchange  }) {
             <Textarea
               rows="3"
               placeholder="Miêu tả."
-              name="descipt_fac"
-              value={descipt_fac?.replace(/ +(?= )/g,'')}
+              name="descript_dep"
+              value={descript_dep?.replace(/ +(?= )/g,'')}
               onChange={handleOnchange}
             />
           </div>
@@ -61,4 +61,4 @@ function FacultyForms({ facultyForm, handleOnchange  }) {
   );
 }
 
-export default FacultyForms;
+export default DepartmentForms;

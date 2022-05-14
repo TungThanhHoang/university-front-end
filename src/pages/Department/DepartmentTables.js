@@ -1,17 +1,18 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { ToastContainer, toast } from "react-toastify";
-import employeeSlice, {
-  getEmployee,
-  deleteEmployee,
-  updateEmployee,
-  findEmployee,
-} from "./employeeSlice";
+import departmentSlice, {
+  getDepartment,
+  deleteDepartment,
+  updateDepartment,
+  findDepartment,
+} from "./departmentSlice";
 import notifyDeleteSlice from "../../components/NotifyDelete/notifyDeleteSlice";
 import {
-  getEmployeeSelector,
-  findEmployeeSelector,
-  findIdEmployeeSelector,
+  getDepartmentSelector,
+  notifyDeleteSelector,
+  findDepartmentSelector,
+  findIdDepartmentSelector,
 } from "../../redux/selector";
 import PageTitle from "../../components/Typography/PageTitle";
 import {
@@ -27,20 +28,20 @@ import {
   Pagination,
 } from "@windmill/react-ui";
 
-import response2 from "../../utils/demo/tableData";
-import EmployeeModals from "../Employee/EmployeeModals";
-import EmployeeUpdateModals from "../Employee/EmployeeUpdateModal";
+import DepartmentModals from "../Department/DepartmentModals";
+import DepartmentUpdateModals from "../Department/DepartmentUpdateModal";
 import { unwrapResult } from "@reduxjs/toolkit";
 import NotifyDelete from "../../components/NotifyDelete/NotifyDelete";
 import ActionTable from "../../components/ActionTable";
 
-function EmployeeTables() {
+function DepartmentTables() {
   const dispatch = useDispatch();
-  const employee = useSelector(getEmployeeSelector);
-  const employeeRecord = useSelector(findEmployeeSelector);
-  const employeeId = useSelector(findIdEmployeeSelector);
+  const department = useSelector(getDepartmentSelector);
+  const departmentRecord = useSelector(findDepartmentSelector);
+  const departmentId = useSelector(findIdDepartmentSelector);
 
-  const response = employee?.concat([]);
+  console.log(departmentRecord);
+  const response = department?.concat([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isModalUpdate, setIsModalUpdate] = useState(false);
 
@@ -54,7 +55,7 @@ function EmployeeTables() {
 
   function closeModalUpdate() {
     setIsModalUpdate(false);
-    dispatch(employeeSlice.actions.clearState());
+    dispatch(departmentSlice.actions.clearState());
   }
 
   const [pageTable, setPageTable] = useState(1);
@@ -65,18 +66,18 @@ function EmployeeTables() {
   const resultsPerPage = 10;
   const totalResults = response?.length;
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const results = await dispatch(getEmployee());
-        const data = unwrapResult(results);
-        console.log(data);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-    fetchData();
-  }, []);
+//   useEffect(() => {
+//     const fetchData = async () => {
+//       try {
+//         const results = await dispatch(getDepartment());
+//         const data = unwrapResult(results);
+//         console.log(data);
+//       } catch (error) {
+//         console.log(error);
+//       }
+//     };
+//     fetchData();
+//   }, []);
 
   useEffect(() => {
     setDataTable(
@@ -93,10 +94,9 @@ function EmployeeTables() {
 
   const openModalUpdate = async (id) => {
     try {
-      const result = await dispatch(findEmployee(id.replace(/ /g, '')));
+      const result = await dispatch(findDepartment(id));
       const data = unwrapResult(result);
       // dispatch(facultySlice.actions.updateFacultyAction(id));
-      console.log(data)
       if (data) {
         setIsModalUpdate(true);
       }
@@ -106,7 +106,7 @@ function EmployeeTables() {
   };
 
   const openModalDelete = (id) => {
-    dispatch(employeeSlice.actions.findIdDelete(id.replace(/ /g, '')));
+    dispatch(departmentSlice.actions.findIdDelete(id));
     dispatch(notifyDeleteSlice.actions.open());
   };
 
@@ -114,16 +114,11 @@ function EmployeeTables() {
     dispatch(notifyDeleteSlice.actions.close());
   };
 
-  const formatDate = (birthday) => {
-    let data = new Date(birthday);
-    return data.toLocaleDateString();
-  };
-
   const handleConfirmDelete = async (id) => {
     try {
-      const results = await dispatch(deleteEmployee(id));
+      const results = await dispatch(deleteDepartment(id));
       const data = unwrapResult(results);
-      await dispatch(employeeSlice.actions.deleteEmployeeAction(id));
+      await dispatch(departmentSlice.actions.deleteDepartmentAction(id));
       handleCloseModal();
       toast.success(`Xóa Thành công`, {
         position: "top-right",
@@ -135,7 +130,6 @@ function EmployeeTables() {
         progress: undefined,
       });
     } catch (error) {
-      console.log(error)
       toast.error(`${error}`, {
         position: "top-right",
         autoClose: 3000,
@@ -153,21 +147,22 @@ function EmployeeTables() {
       <ToastContainer />
       <PageTitle>
         <div className="flex justify-between">
-          <div>Cán bộ viên chức</div>
-          <Button onClick={openModal}>Thêm cán bộ viên chức</Button>
+          <div>Phòng ban</div>
+          <Button onClick={openModal}>Thêm khoa</Button>
         </div>
       </PageTitle>
 
-      {employeeId !== null && (
+      {departmentId !== null && (
         <NotifyDelete
           handleConfirmDelete={handleConfirmDelete}
           handleCloseModal={handleCloseModal}
-          id={employeeId[0].id_emp.replace(/ /g, '')}
+          id={departmentId[0].id_dep}
+
         />
       )}
-      <EmployeeModals isModalOpen={isModalOpen} closeModal={closeModal} />
-      {employeeRecord !== null && (
-        <EmployeeUpdateModals
+      <DepartmentModals isModalOpen={isModalOpen} closeModal={closeModal} />
+      {departmentRecord !== null && (
+        <DepartmentUpdateModals
           isModalOpen={isModalUpdate}
           openModalUpdate={openModalUpdate}
           closeModal={closeModalUpdate}
@@ -178,90 +173,38 @@ function EmployeeTables() {
           <TableHeader>
             <tr>
               <TableCell>STT</TableCell>
-              <TableCell>Tên Nhân Viên</TableCell>
-              <TableCell>Giới tính</TableCell>
-              <TableCell>Ngày Sinh</TableCell>
-              <TableCell>Quê Quán</TableCell>
-              <TableCell>Địa chỉ hiện tại</TableCell>
-              <TableCell>Học vấn</TableCell>
+              <TableCell>Phòng ban</TableCell>
               <TableCell>Số điện thoại</TableCell>
-              <TableCell>Email</TableCell>
+              <TableCell>Miêu tả</TableCell>
               <TableCell>Hành động</TableCell>
             </tr>
           </TableHeader>
           <TableBody>
-            {employee?.map((item, i) => (
+            {department?.map((item, i) => (
               <TableRow key={i}>
                 <TableCell>{i + 1}</TableCell>
                 <TableCell>
                   <div className="flex items-center text-sm">
                     <div>
                       <p className="font-semibold capitalize">
-                        {item.name_emp}
+                        {item.name_dep}
                       </p>
                       <p className="text-xs text-gray-600 dark:text-gray-400">
-                        {item.id_emp}
+                        {item.id_code}
                       </p>
                     </div>
                   </div>
                 </TableCell>
                 <TableCell>
-                  <div className="flex items-center text-sm">
-                    <div>
-                      <p className=" capitalize ">{item.gender_emp}</p>
-                    </div>
-                  </div>
+                  <span className="text-sm">{item.phone_dep}</span>
                 </TableCell>
-                <TableCell>
-                  <div className="flex items-center text-sm">
-                    <div>
-                      <p className=" capitalize">
-                        {formatDate(item.birthday_emp)}
-                      </p>
-                    </div>
-                  </div>
-                </TableCell>
-                <TableCell>
-                  <div className="flex items-center text-sm">
-                    <div>
-                      <p className=" capitalize">{item.hometown_emp}</p>
-                    </div>
-                  </div>
-                </TableCell>
-                <TableCell>
-                  <div className="flex items-center text-sm">
-                    <div>
-                      <p className=" capitalize">{item.address_emp}</p>
-                    </div>
-                  </div>
-                </TableCell>
-                <TableCell>
-                  <div className="flex items-center text-sm">
-                    <div>
-                      <p className=" capitalize">{item.name_academic}</p>
-                      <p className=" capitalize">{item.name_job}</p>
-                    </div>
-                  </div>
-                </TableCell>
-                <TableCell>
-                  <div className="flex items-center text-sm">
-                    <div>
-                      <p className=" capitalize">{item.mobile_emp}</p>
-                    </div>
-                  </div>
-                </TableCell>
-                <TableCell>
-                  <div className="flex items-center text-sm">
-                    <div>
-                      <p className="">{item.email_emp}</p>
-
-                    </div>
-                  </div>
+                <TableCell className="">
+                  <span className="text-sm ">{item.descript_dep}</span>
                 </TableCell>
                 <ActionTable
                   openModalUpdate={openModalUpdate}
                   openModalDelete={openModalDelete}
-                  id={item.id_emp.replace(/ +(?= )/g, "")}
+                  id={item.id_dep}
                 />
               </TableRow>
             ))}
@@ -280,4 +223,4 @@ function EmployeeTables() {
   );
 }
 
-export default EmployeeTables;
+export default DepartmentTables;

@@ -61,7 +61,7 @@ function AcademicUpdateModal({ isModalOpen, closeModal }) {
       closeModal();
       console.log(data);
     } catch (error) {
-      toast.error(`${error}`, {
+      toast.error(`${error.msg}`, {
         position: "top-right",
         autoClose: 3000,
         hideProgressBar: false,

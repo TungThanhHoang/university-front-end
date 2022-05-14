@@ -20,6 +20,18 @@ export const findFaculty = createAsyncThunk(
     try {
       const flag = await localStorage.getItem("flag");
       const response = await axios.get(`${API_URL}/faculty/${facultyId}/find/${flag}` );
+      return response.data.data.recordset;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.response.data);
+    }
+  }
+);
+export const findFacultyView = createAsyncThunk(
+  "faculty/findFacultyView",
+  async (facultyId, thunkAPI) => {
+    try {
+      const flag = await localStorage.getItem("flag");
+      const response = await axios.get(`${API_URL}/faculty/${facultyId}/find/position-faculty/${flag}` );
       await getFaculty();
       return response.data.data.recordset;
     } catch (error) {
@@ -73,7 +85,8 @@ const facultySlice = createSlice({
     loading: false,
     faculty: [],
     facultyRecord:null,
-    idFaculty: null
+    idFaculty: null,
+    facultyRecordView:null
 
   },
   reducers: {
@@ -116,6 +129,18 @@ const facultySlice = createSlice({
       state.facultyRecord = action.payload;
     },
     [findFaculty.rejected]: (state, action) => {
+      state.loading = false;
+      state.error = action.payload.msg;
+    },
+    [findFacultyView.pending]: (state, action) => {
+      state.loading = true;
+    },
+    [findFacultyView.fulfilled]: (state, action) => {
+      state.loading = false;
+      state.error = null;
+      state.facultyRecordView = action.payload;
+    },
+    [findFacultyView.rejected]: (state, action) => {
       state.loading = false;
       state.error = action.payload.msg;
     },

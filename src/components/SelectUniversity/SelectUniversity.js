@@ -29,7 +29,7 @@ export default function SelectUniversity() {
       <span>Chọn trường </span>
       <Select className="mt-1" onChange={handleOnchangeSelect}  name="flag">
         <option value="">--Chọn trường--</option>
-        {university.recordset?.map((item) => (
+        {university?.map((item) => (
           <option className="capitalize" key={item.id_uni} value={item.id_uni}>{item.name_vn_uni}</option>
         ))}
       </Select>

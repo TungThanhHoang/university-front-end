@@ -19,7 +19,7 @@ import {
 } from "@windmill/react-ui";
 import { EditIcon, TrashIcon, ViewIcon } from "../icons/index";
 
-function ActionTable({ openModalUpdate, id, openModalDelete }) {
+function ActionTable({ openModalUpdate, id, openModalDelete , openModalView }) {
   const dispatch = useDispatch();
 
   return (
@@ -42,7 +42,7 @@ function ActionTable({ openModalUpdate, id, openModalDelete }) {
           >
             <TrashIcon className="w-5 h-5" aria-hidden="true" />
           </Button>
-          <Button layout="link" size="icon" aria-label="View">
+          <Button layout="link" size="icon" aria-label="View" onClick={() => openModalView(id)}>
             <ViewIcon className="w-5 h-5" aria-hidden="true" />
           </Button>
         </div>

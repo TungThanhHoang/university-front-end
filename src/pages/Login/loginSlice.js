@@ -47,13 +47,52 @@ export const loginUserAuth = createAsyncThunk(
   }
 );
 
+// Login University Main
+export const getUserUniversityMain = createAsyncThunk(
+  "auth/getUserMain",
+  async (data, thunkAPI) => {
+    const tokenUser = localStorage["user_token"];
+    if (tokenUser) {
+      setToken(tokenUser);
+    }
+    try {
+      const response = await axios.get(`${API_URL}/auth/me/main`);
+      const { id_main_uni , username } = response.data.data.recordset[0];
+      localStorage.setItem("flag", id_main_uni);
+      localStorage.setItem("username", username);
+      return response.data.data?.recordset;
+    } catch (error) {
+      setToken(null);
+      localStorage.removeItem("user_token");
+      return thunkAPI.rejectWithValue(error.response.data);
+    }
+  }
+);
+
+export const loginUserUniversityMain = createAsyncThunk(
+  "auth/loginUserMain",
+  async (data, thunkAPI) => {
+    try {
+      const response = await axios.post(`${API_URL}/auth/login/main`, data);
+      if (response.data.success === true) {
+        localStorage.setItem("user_token", response.data.accessToken);
+      }
+      await thunkAPI.dispatch(getUserUniversityMain());
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.response.data);
+    }
+  }
+);
+
 const authLoginSlice = createSlice({
   name: "authLogin",
   initialState: {
     loading: false,
     error: null,
     isAuth: localStorage.getItem('user_token') ? true : false,
-    user:null
+    user:null,
+    flag:null
   },
   reducers: {
     logout: (state, action) => {
@@ -94,6 +133,32 @@ const authLoginSlice = createSlice({
       state.loading = false;
       state.error = action.payload.msg;
     },
+    [loginUserUniversityMain.pending]: (state, action) => {
+      state.loading = true;
+    },
+    [loginUserUniversityMain.fulfilled]: (state, action) => {
+      state.loading = false;
+      state.isAuth = true;
+      state.error = null;
+    },
+    [loginUserUniversityMain.rejected]: (state, action) => {
+      state.loading = false;
+      state.error = action.payload.msg;
+    },
+    [getUserUniversityMain.pending]: (state, action) => {
+      state.loading = true;
+    },
+    [getUserUniversityMain.fulfilled]: (state, action) => {
+      state.loading = false;
+      state.isAuth = true;
+      state.user = action.payload;
+      state.error = null;
+      state.flag = action.payload[0].id_main_uni;
+    },
+    [getUserUniversityMain.rejected]: (state, action) => {
+      state.loading = false;
+      state.error = action.payload.msg;
+    }
   },
 });
 

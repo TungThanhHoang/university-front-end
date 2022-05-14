@@ -30,6 +30,9 @@ import { ReactComponent as ViewIcon } from './view.svg'
 import { ReactComponent as ClassIcon } from './class.svg'
 import { ReactComponent as MajorIcon } from './major.svg'
 import { ReactComponent as SubjectIcon } from './subject.svg'
+import { ReactComponent as LocaleIcon } from './locale.svg'
+import { ReactComponent as PhoneIcon } from './phone.svg'
+import { ReactComponent as WebIcon } from './web.svg'
 
 export {
   ButtonsIcon,
@@ -64,4 +67,7 @@ export {
   ClassIcon,
   MajorIcon,
   SubjectIcon,
+  LocaleIcon,
+  PhoneIcon,
+  WebIcon
 }

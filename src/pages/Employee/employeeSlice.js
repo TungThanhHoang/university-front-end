@@ -40,7 +40,7 @@ export const updateEmployee = createAsyncThunk(
   "employee/updateEmployee",
   async (data, thunkAPI) => {
     try {
-      const response = await axios.post(`${API_URL}/employee/${data.id_employee}/update/` , data );
+      const response = await axios.post(`${API_URL}/employee/${data.id_emp}/update` , data );
       return response.data.data.recordset;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response.data);
@@ -77,14 +77,14 @@ const jobSlice = createSlice({
       state.employee = action.payload;  
     },
     deleteEmployeeAction: (state, action) => {
-      state.employee = state.employee.filter( record => record.id_employee !== action.payload)
+      state.employee = state.employee.filter( record => record.id_emp?.trim() !== action.payload)
     },
     findIdDelete: (state , action) =>{
-      state.idEmployee = state.employee.filter( record => record.id_employee === action.payload )
+      state.idEmployee = state.employee.filter( record => record.id_emp?.trim() === action.payload )
     }
     ,
     updateEmployeeAction: (state, action) => {
-      state.mployeeRecord = state.employeeRecord.map( record => record.id_employee === action.payload.id_employee ? action.payload : record)
+      state.employeeRecord = state.employeeRecord.map( record => record.id_emp === action.payload.id_emp ? action.payload : record)
     }
   },
   extraReducers: {

@@ -6,6 +6,8 @@ import facultySlice, {
   deleteFaculty,
   updateFaculty,
   findFaculty,
+  findIdView,
+  findFacultyView,
 } from "./facultySlice";
 import notifyDeleteSlice from "../../components/NotifyDelete/notifyDeleteSlice";
 import {
@@ -13,6 +15,7 @@ import {
   notifyDeleteSelector,
   findFacultySelector,
   findIdFacultySelector,
+  findFacultyViewSelector
 } from "../../redux/selector";
 import PageTitle from "../../components/Typography/PageTitle";
 import {
@@ -34,18 +37,19 @@ import FacultyUpdateModals from "../Faculty/FacultyUpdateModal";
 import { unwrapResult } from "@reduxjs/toolkit";
 import NotifyDelete from "../../components/NotifyDelete/NotifyDelete";
 import ActionTable from "../../components/ActionTable";
+import FacultyModalView from "./FacultyModalView";
 
 function FacultyTables() {
   const dispatch = useDispatch();
   const faculty = useSelector(getFacultySelector);
   const facultyRecord = useSelector(findFacultySelector);
+  const facultyRecordView = useSelector(findFacultyViewSelector);
   const facultyId = useSelector(findIdFacultySelector);
-
-  console.log(facultyRecord);
   const response = faculty?.concat([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isModalUpdate, setIsModalUpdate] = useState(false);
-
+  const [isModalView, setIsModalView] = useState(false);
+  // Modal add
   function openModal() {
     setIsModalOpen(true);
   }
@@ -54,6 +58,11 @@ function FacultyTables() {
     setIsModalOpen(false);
   }
 
+  function closeModalView() {
+    setIsModalView(false);
+    dispatch(facultySlice.actions.clearState());
+  }
+  // Modal Update
   function closeModalUpdate() {
     setIsModalUpdate(false);
     dispatch(facultySlice.actions.clearState());
@@ -92,12 +101,23 @@ function FacultyTables() {
   const onPageChangeTable = (p) => {
     setPageTable(p);
   };
-
+  // Open Modal View
+  const openModalView = async (id) => {
+    try {
+      const result = await dispatch(findFacultyView(id));
+      const data = unwrapResult(result);
+      if (data) {
+        setIsModalView(true);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  //  Open Modal Update
   const openModalUpdate = async (id) => {
     try {
       const result = await dispatch(findFaculty(id));
       const data = unwrapResult(result);
-      // dispatch(facultySlice.actions.updateFacultyAction(id));
       if (data) {
         setIsModalUpdate(true);
       }
@@ -158,7 +178,12 @@ function FacultyTables() {
           handleConfirmDelete={handleConfirmDelete}
           handleCloseModal={handleCloseModal}
           id={facultyId[0].id_fac}
-
+        />
+      )}
+      {facultyRecordView !== null && (
+        <FacultyModalView
+          isModalOpen={isModalView}
+          closeModal={closeModalView}
         />
       )}
       <FacultyModals isModalOpen={isModalOpen} closeModal={closeModal} />
@@ -205,6 +230,7 @@ function FacultyTables() {
                 <ActionTable
                   openModalUpdate={openModalUpdate}
                   openModalDelete={openModalDelete}
+                  openModalView={openModalView}
                   id={item.id_fac}
                 />
               </TableRow>

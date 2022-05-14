@@ -119,7 +119,7 @@ function Login() {
                     <Input
                       className="mt-1"
                       type="email"
-                      placeholder="john@doe.com"
+                      placeholder="abc@gmail.com"
                       name="email"
                       onChange={handleOnchange}
                       value={email}
@@ -154,9 +154,9 @@ function Login() {
                   <p className="mt-4">
                     <Link
                       className="text-sm font-medium text-purple-600 dark:text-purple-400 hover:underline"
-                      to="/forgot-password"
+                      to="/login-admin"
                     >
-                      Quên mật khẩu?
+                      Đăng nhập với Đại học Đà Nẵng?
                     </Link>
                   </p>
                 </form>

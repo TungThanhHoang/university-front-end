@@ -1,13 +1,7 @@
-import React, { useState, useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import React, { useState } from "react";
+import { useDispatch } from "react-redux";
 import { ToastContainer, toast } from "react-toastify";
-import employeeSlice, {
-  addEmployee,
-  getEmployee,
-} from "../Employee/employeeSlice";
-import { getAcademic } from "../Academic/academicSlice";
-import { getJob } from "../Job/jobSlice";
-import { getJobSelector, getAcademicSelector } from "../../redux/selector";
+import departmentSlice ,{ addDepartment, getDepartment } from "../Department/departmentSlice";
 
 import {
   Modal,
@@ -16,61 +10,34 @@ import {
   ModalFooter,
   Button,
 } from "@windmill/react-ui";
-import EmployeeForms from "../../components/EmployeeForm/EmployeeForm";
+import DepartmentForms from "../../components/DepartmentForm/DepartmentForms";
 import { unwrapResult } from "@reduxjs/toolkit";
 
-function EmployeeModals({ isModalOpen, closeModal }) {
+function DepartmentModals({ isModalOpen, closeModal }) {
   const dispatch = useDispatch();
-  const job = useSelector(getJobSelector);
-  const academic = useSelector(getAcademicSelector);
-  const [employeeForm, setEmployeeForm] = useState({
-    id_emp: "",
-    name_emp: "",
-    gender_emp: "",
-    birthday_emp: "",
-    hometown_emp: "",
-    address_emp: "",
-    mobile_emp: "",
-    email_emp: "",
-    id_job: "",
-    id_academic: "",
+  const [departmentForm, setDepartmentForm] = useState({
+    name_dep: "",
+    id_code: "",
+    phone_dep: "",
+    descript_dep: "",
   });
-  const {
-    name_emp,
-    gender_emp,
-    id_emp,
-    birthday_emp,
-    hometown_emp,
-    address_emp,
-    mobile_emp,
-    email_emp,
-    id_job,
-    id_academic,
-  } = employeeForm;
+  const { name_dep, id_code, phone_dep, descript_dep } = departmentForm;
 
-  useEffect(() => {
-    Promise.all([dispatch(getAcademic()), dispatch(getJob())]);
-  }, []);
   const handleOnchange = (e) => {
-    setEmployeeForm({
-      ...employeeForm,
+    setDepartmentForm({
+      ...departmentForm,
       [e.target.name]: e.target.value,
+      flag: localStorage.getItem("flag").replace(/ /g, ""),
     });
   };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
     if (
-      name_emp === "" ||
-      id_emp === "" ||
-      gender_emp === "" ||
-      birthday_emp === "" ||
-      hometown_emp === "" ||
-      address_emp === "" ||
-      mobile_emp === "" ||
-      email_emp === "" ||
-      id_job === "" ||
-      id_academic === ""
+      name_dep === "" ||
+      phone_dep === "" ||
+      id_code === "" ||
+      descript_dep === ""
     )
       return toast.error("Hãy nhập đầy đủ thông tin!", {
         position: "top-right",
@@ -82,9 +49,9 @@ function EmployeeModals({ isModalOpen, closeModal }) {
         progress: undefined,
       });
     try {
-      const result = await dispatch(addEmployee(employeeForm));
+      const result = await dispatch(addDepartment(departmentForm));
       const data = unwrapResult(result);
-      await dispatch(getEmployee());
+      await dispatch(getDepartment());
       toast.success(`Thêm Thành công`, {
         position: "top-right",
         autoClose: 3000,
@@ -95,10 +62,9 @@ function EmployeeModals({ isModalOpen, closeModal }) {
         progress: undefined,
       });
       closeModal();
-      setEmployeeForm("");
+      setDepartmentForm("")
     } catch (error) {
-      console.log(error)
-      toast.error(`${error.msg}`, {
+      toast.error(`${error}`, {
         position: "top-right",
         autoClose: 3000,
         hideProgressBar: false,
@@ -115,11 +81,9 @@ function EmployeeModals({ isModalOpen, closeModal }) {
       <Modal isOpen={isModalOpen} onClose={closeModal}>
         <form onSubmit={(e) => handleSubmit(e)}>
           <ModalBody>
-            <EmployeeForms
+            <DepartmentForms
               handleOnchange={handleOnchange}
-              employeeForm={employeeForm}
-              job={job}
-              academic={academic}
+              departmentForm={departmentForm}
             />
           </ModalBody>
           <ModalFooter>
@@ -148,4 +112,4 @@ function EmployeeModals({ isModalOpen, closeModal }) {
   );
 }
 
-export default EmployeeModals;
+export default DepartmentModals;
