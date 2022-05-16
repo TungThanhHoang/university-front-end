@@ -2,6 +2,7 @@ import { configureStore } from '@reduxjs/toolkit'
 import selectUniversitySlice from '../components/SelectUniversity/selectUniversitySlice'
 import authLoginSlice from '../pages/Login/loginSlice'
 import facultySlice from '../pages/Faculty/facultySlice'
+import positionFacultySlice from '../pages/Faculty/positionFacultySlice'
 import departmentSlice from '../pages/Department/departmentSlice'
 import jobSlice from '../pages/Job/jobSlice'
 import academicSlice from '../pages/Academic/academicSlice'
@@ -18,7 +19,9 @@ const store = configureStore({
         job: jobSlice.reducer,
         academic: academicSlice.reducer,
         employee: employeeSlice.reducer,
-        memberUniversity: memUniversitySlice.reducer
+        memberUniversity: memUniversitySlice.reducer,
+        positionFaculty: positionFacultySlice.reducer,
+
 
     }
 })

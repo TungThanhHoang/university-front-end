@@ -27,7 +27,6 @@ import {
   Pagination,
 } from "@windmill/react-ui";
 
-import response2 from "../../utils/demo/tableData";
 import EmployeeModals from "../Employee/EmployeeModals";
 import EmployeeUpdateModals from "../Employee/EmployeeUpdateModal";
 import { unwrapResult } from "@reduxjs/toolkit";
@@ -40,9 +39,10 @@ function EmployeeTables() {
   const employeeRecord = useSelector(findEmployeeSelector);
   const employeeId = useSelector(findIdEmployeeSelector);
 
-  const response = employee?.concat([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isModalUpdate, setIsModalUpdate] = useState(false);
+  const [pageTable, setPageTable] = useState(1);
+  const [dataTable, setDataTable] = useState([]);
 
   function openModal() {
     setIsModalOpen(true);
@@ -56,14 +56,6 @@ function EmployeeTables() {
     setIsModalUpdate(false);
     dispatch(employeeSlice.actions.clearState());
   }
-
-  const [pageTable, setPageTable] = useState(1);
-
-  const [dataTable, setDataTable] = useState([]);
-
-  // pagination setup
-  const resultsPerPage = 10;
-  const totalResults = response?.length;
 
   useEffect(() => {
     const fetchData = async () => {
@@ -80,12 +72,16 @@ function EmployeeTables() {
 
   useEffect(() => {
     setDataTable(
-      response?.slice(
+      employee?.slice(
         (pageTable - 1) * resultsPerPage,
         pageTable * resultsPerPage
       )
     );
   }, [pageTable]);
+
+  // pagination setup
+  const resultsPerPage = 10;
+  const totalResults = employee?.length;
 
   const onPageChangeTable = (p) => {
     setPageTable(p);
@@ -93,10 +89,10 @@ function EmployeeTables() {
 
   const openModalUpdate = async (id) => {
     try {
-      const result = await dispatch(findEmployee(id.replace(/ /g, '')));
+      const result = await dispatch(findEmployee(id.replace(/ /g, "")));
       const data = unwrapResult(result);
       // dispatch(facultySlice.actions.updateFacultyAction(id));
-      console.log(data)
+      console.log(data);
       if (data) {
         setIsModalUpdate(true);
       }
@@ -106,7 +102,7 @@ function EmployeeTables() {
   };
 
   const openModalDelete = (id) => {
-    dispatch(employeeSlice.actions.findIdDelete(id.replace(/ /g, '')));
+    dispatch(employeeSlice.actions.findIdDelete(id.replace(/ /g, "")));
     dispatch(notifyDeleteSlice.actions.open());
   };
 
@@ -135,7 +131,7 @@ function EmployeeTables() {
         progress: undefined,
       });
     } catch (error) {
-      console.log(error)
+      console.log(error);
       toast.error(`${error}`, {
         position: "top-right",
         autoClose: 3000,
@@ -162,7 +158,7 @@ function EmployeeTables() {
         <NotifyDelete
           handleConfirmDelete={handleConfirmDelete}
           handleCloseModal={handleCloseModal}
-          id={employeeId[0].id_emp.replace(/ /g, '')}
+          id={employeeId[0].id_emp.replace(/ /g, "")}
         />
       )}
       <EmployeeModals isModalOpen={isModalOpen} closeModal={closeModal} />
@@ -190,7 +186,7 @@ function EmployeeTables() {
             </tr>
           </TableHeader>
           <TableBody>
-            {employee?.map((item, i) => (
+            {dataTable?.map((item, i) => (
               <TableRow key={i}>
                 <TableCell>{i + 1}</TableCell>
                 <TableCell>
@@ -254,7 +250,6 @@ function EmployeeTables() {
                   <div className="flex items-center text-sm">
                     <div>
                       <p className="">{item.email_emp}</p>
-
                     </div>
                   </div>
                 </TableCell>

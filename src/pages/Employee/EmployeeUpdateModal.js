@@ -1,4 +1,4 @@
-import React, { useState ,useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { ToastContainer, toast } from "react-toastify";
 import { updateEmployee, getEmployee } from "../Employee/employeeSlice";
@@ -35,25 +35,21 @@ function EmployeeUpdateModal({ isModalOpen, closeModal }) {
     name_academic: `${employeeRecord[0]?.name_academic}`,
     id_academic: `${employeeRecord[0]?.id_academic}`,
   });
-  console.log(employeeForm)
 
   useEffect(() => {
     Promise.all([dispatch(getAcademic()), dispatch(getJob())]);
   }, []);
-  const { id_academic ,  name_emp , gender_emp  } = employeeForm;
+  const { id_academic, name_emp, gender_emp } = employeeForm;
   const handleOnchange = (e) => {
     setEmployeeForm({
       ...employeeForm,
-      [e.target.name]: e.target.value
+      [e.target.name]: e.target.value,
     });
   };
 
   const handleUpdate = async (event) => {
     event.preventDefault();
-    if (
-      name_emp === ""||
-      gender_emp === "" 
-    )
+    if (name_emp === "" || gender_emp === "")
       return toast.error("Hãy nhập đầy đủ thông tin!", {
         position: "top-right",
         autoClose: 3000,
@@ -77,7 +73,6 @@ function EmployeeUpdateModal({ isModalOpen, closeModal }) {
         progress: undefined,
       });
       closeModal();
-      console.log(data);
     } catch (error) {
       toast.error(`${error.msg}`, {
         position: "top-right",
@@ -108,7 +103,7 @@ function EmployeeUpdateModal({ isModalOpen, closeModal }) {
               <Button layout="outline" onClick={closeModal}>
                 Hủy bỏ
               </Button>
-            </div>  
+            </div>
             <div className="hidden sm:block">
               <Button type="submit">Lưu thay đổi</Button>
             </div>

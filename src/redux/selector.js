@@ -22,6 +22,10 @@ export const findFacultySelector = (state) => state.faculty.facultyRecord;
 export const findFacultyViewSelector = (state) => state.faculty.facultyRecordView;
 export const findIdFacultySelector = (state) => state.faculty.idFaculty;
 
+// Selector Position faculty
+
+export const getPositionFacultySelector = (state) => state.positionFaculty.positionFaculty;
+
 // Selector Department
 export const getDepartmentSelector = (state) => state.department.department;
 export const findDepartmentSelector = (state) => state.department.departmentRecord;
@@ -44,3 +48,4 @@ export const findIdAcademicSelector = (state) => state.academic.idAcademic;
 export const getEmployeeSelector = (state) => state.employee.employee;
 export const findEmployeeSelector = (state) => state.employee.employeeRecord;
 export const findIdEmployeeSelector = (state) => state.employee.idEmployee;
+export const getEmployeePositionFacSelector = (state) => state.employee.employeePositionFac;

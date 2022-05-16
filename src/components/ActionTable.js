@@ -42,7 +42,7 @@ function ActionTable({ openModalUpdate, id, openModalDelete , openModalView }) {
           >
             <TrashIcon className="w-5 h-5" aria-hidden="true" />
           </Button>
-          <Button layout="link" size="icon" aria-label="View" onClick={() => openModalView(id)}>
+          <Button id={id} layout="link" size="icon" aria-label="View" onClick={() => openModalView(id)}>
             <ViewIcon className="w-5 h-5" aria-hidden="true" />
           </Button>
         </div>

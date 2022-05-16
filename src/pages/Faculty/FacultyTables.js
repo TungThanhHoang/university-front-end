@@ -4,18 +4,17 @@ import { ToastContainer, toast } from "react-toastify";
 import facultySlice, {
   getFaculty,
   deleteFaculty,
-  updateFaculty,
   findFaculty,
-  findIdView,
   findFacultyView,
 } from "./facultySlice";
+import { getPositionFaculty } from "./positionFacultySlice";
 import notifyDeleteSlice from "../../components/NotifyDelete/notifyDeleteSlice";
 import {
   getFacultySelector,
   notifyDeleteSelector,
   findFacultySelector,
   findIdFacultySelector,
-  findFacultyViewSelector
+  findFacultyViewSelector,
 } from "../../redux/selector";
 import PageTitle from "../../components/Typography/PageTitle";
 import {
@@ -45,10 +44,12 @@ function FacultyTables() {
   const facultyRecord = useSelector(findFacultySelector);
   const facultyRecordView = useSelector(findFacultyViewSelector);
   const facultyId = useSelector(findIdFacultySelector);
-  const response = faculty?.concat([]);
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isModalUpdate, setIsModalUpdate] = useState(false);
   const [isModalView, setIsModalView] = useState(false);
+  const [pageTable, setPageTable] = useState(1);
+  const [dataTable, setDataTable] = useState([]);
   // Modal add
   function openModal() {
     setIsModalOpen(true);
@@ -68,13 +69,9 @@ function FacultyTables() {
     dispatch(facultySlice.actions.clearState());
   }
 
-  const [pageTable, setPageTable] = useState(1);
-
-  const [dataTable, setDataTable] = useState([]);
-
   // pagination setup
   const resultsPerPage = 10;
-  const totalResults = response?.length;
+  const totalResults = faculty?.length;
 
   useEffect(() => {
     const fetchData = async () => {
@@ -91,7 +88,7 @@ function FacultyTables() {
 
   useEffect(() => {
     setDataTable(
-      response?.slice(
+      faculty?.slice(
         (pageTable - 1) * resultsPerPage,
         pageTable * resultsPerPage
       )
@@ -105,6 +102,7 @@ function FacultyTables() {
   const openModalView = async (id) => {
     try {
       const result = await dispatch(findFacultyView(id));
+      await dispatch(getPositionFaculty(id));
       const data = unwrapResult(result);
       if (data) {
         setIsModalView(true);

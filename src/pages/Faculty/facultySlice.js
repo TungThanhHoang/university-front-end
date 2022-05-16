@@ -91,7 +91,8 @@ const facultySlice = createSlice({
   },
   reducers: {
     clearState: (state, action) => {
-      state.facultyRecord = null  
+      state.facultyRecord = null;
+      state.facultyRecordView = null;  
     },
     getFacultyAction: (state, action) => {
       state.faculty = action.payload;  
