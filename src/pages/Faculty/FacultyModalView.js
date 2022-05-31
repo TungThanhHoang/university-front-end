@@ -90,6 +90,7 @@ function FacultyModalView({ isModalOpen, closeModal }) {
         progress: undefined,
       });
     }
+    
     // dispatch(findFacultyView(idFacultyView[0].id_fac))
   }, [postAPI]);
 
