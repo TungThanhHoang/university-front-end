@@ -1,7 +1,8 @@
 import React, { useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { ToastContainer, toast } from "react-toastify";
-import majorSlice ,{ addMajor, getMajor } from "../Major/majorSlice";
+import { updateSubject, getSubject } from "../Subject/subjectSlice";
+import { findSubjectSelector } from "../../redux/selector";
 
 import {
   Modal,
@@ -10,28 +11,31 @@ import {
   ModalFooter,
   Button,
 } from "@windmill/react-ui";
-import MajorForms from "../../components/MajorForm/MajorForms";
+import SubjectForms from "../../components/SubjectForm/SubjectForms";
 import { unwrapResult } from "@reduxjs/toolkit";
 
-function MajorModals({ isModalOpen, closeModal , faculty }) {
+function SubjectUpdateModal({ isModalOpen, closeModal , faculty }) {
   const dispatch = useDispatch();
-  const [majorForm, setMajorForm] = useState({
-    name_major: "",
-    id_fac: "",
+  const subjectRecord = useSelector(findSubjectSelector);
+  const [subjectForm, setSubjectForm] = useState({
+    id_subject: `${subjectRecord[0]?.id_subject}`,
+    name_subject: `${subjectRecord[0]?.name_subject}`,
+    code_subject: `${subjectRecord[0]?.code_subject}`,
+    credit_subject: `${subjectRecord[0]?.credit_subject}`,
+    id_fac: `${subjectRecord[0]?.id_fac}`
   });
-  const { name_major,  id_fac } = majorForm;
-
+  const { name_major ,id_subject , code_subject, credit_subject ,id_fac} = subjectForm;
   const handleOnchange = (e) => {
-    setMajorForm({
-      ...majorForm,
+    setSubjectForm({
+      ...subjectForm,
       [e.target.name]: e.target.value
     });
   };
 
-  const handleSubmit = async (event) => {
+  const handleUpdate = async (event) => {
     event.preventDefault();
     if (
-      name_major === "" || id_fac  === ""
+      name_major === "" || id_fac  === "" || code_subject === "" || credit_subject === ""
     )
       return toast.error("Hãy nhập đầy đủ thông tin!", {
         position: "top-right",
@@ -43,10 +47,10 @@ function MajorModals({ isModalOpen, closeModal , faculty }) {
         progress: undefined,
       });
     try {
-      const result = await dispatch(addMajor(majorForm));
+      const result = await dispatch(updateSubject(subjectForm));
       const data = unwrapResult(result);
-      await dispatch(getMajor());
-      toast.success(`Thêm Thành công`, {
+      await dispatch(getSubject());
+      toast.success(`Cập nhật Thành công`, {
         position: "top-right",
         autoClose: 3000,
         hideProgressBar: false,
@@ -56,7 +60,6 @@ function MajorModals({ isModalOpen, closeModal , faculty }) {
         progress: undefined,
       });
       closeModal();
-      setMajorForm("")
     } catch (error) {
       toast.error(`${error}`, {
         position: "top-right",
@@ -73,11 +76,11 @@ function MajorModals({ isModalOpen, closeModal , faculty }) {
     <>
       <ToastContainer />
       <Modal isOpen={isModalOpen} onClose={closeModal}>
-        <form onSubmit={(e) => handleSubmit(e)}>
+        <form onSubmit={(e) => handleUpdate(e)}>
           <ModalBody>
-            <MajorForms
+            <SubjectForms
               handleOnchange={handleOnchange}
-              majorForm={majorForm}
+              subjectForm={subjectForm}
               faculty={faculty}
             />
           </ModalBody>
@@ -86,7 +89,7 @@ function MajorModals({ isModalOpen, closeModal , faculty }) {
               <Button layout="outline" onClick={closeModal}>
                 Hủy bỏ
               </Button>
-            </div>
+            </div>  
             <div className="hidden sm:block">
               <Button type="submit">Lưu thay đổi</Button>
             </div>
@@ -107,4 +110,4 @@ function MajorModals({ isModalOpen, closeModal , faculty }) {
   );
 }
 
-export default MajorModals;
+export default SubjectUpdateModal;

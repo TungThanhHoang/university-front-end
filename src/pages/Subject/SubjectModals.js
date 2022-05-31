@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import { ToastContainer, toast } from "react-toastify";
-import majorSlice ,{ addMajor, getMajor } from "../Major/majorSlice";
+import subjectSlice ,{ addSubject, getSubject } from "../Subject/subjectSlice";
 
 import {
   Modal,
@@ -10,20 +10,20 @@ import {
   ModalFooter,
   Button,
 } from "@windmill/react-ui";
-import MajorForms from "../../components/MajorForm/MajorForms";
+import SubjectForms from "../../components/SubjectForm/SubjectForms";
 import { unwrapResult } from "@reduxjs/toolkit";
 
-function MajorModals({ isModalOpen, closeModal , faculty }) {
+function SubjectModals({ isModalOpen, closeModal , faculty }) {
   const dispatch = useDispatch();
-  const [majorForm, setMajorForm] = useState({
-    name_major: "",
+  const [subjectForm, setSubjectForm] = useState({
+    name_subject: "",
     id_fac: "",
   });
-  const { name_major,  id_fac } = majorForm;
+  const { name_subject,  id_fac } = subjectForm;
 
   const handleOnchange = (e) => {
-    setMajorForm({
-      ...majorForm,
+    setSubjectForm({
+      ...subjectForm,
       [e.target.name]: e.target.value
     });
   };
@@ -31,7 +31,7 @@ function MajorModals({ isModalOpen, closeModal , faculty }) {
   const handleSubmit = async (event) => {
     event.preventDefault();
     if (
-      name_major === "" || id_fac  === ""
+      name_subject === "" || id_fac  === ""
     )
       return toast.error("Hãy nhập đầy đủ thông tin!", {
         position: "top-right",
@@ -43,9 +43,9 @@ function MajorModals({ isModalOpen, closeModal , faculty }) {
         progress: undefined,
       });
     try {
-      const result = await dispatch(addMajor(majorForm));
+      const result = await dispatch(addSubject(subjectForm));
       const data = unwrapResult(result);
-      await dispatch(getMajor());
+      await dispatch(getSubject());
       toast.success(`Thêm Thành công`, {
         position: "top-right",
         autoClose: 3000,
@@ -56,7 +56,7 @@ function MajorModals({ isModalOpen, closeModal , faculty }) {
         progress: undefined,
       });
       closeModal();
-      setMajorForm("")
+      setSubjectForm("")
     } catch (error) {
       toast.error(`${error}`, {
         position: "top-right",
@@ -75,9 +75,9 @@ function MajorModals({ isModalOpen, closeModal , faculty }) {
       <Modal isOpen={isModalOpen} onClose={closeModal}>
         <form onSubmit={(e) => handleSubmit(e)}>
           <ModalBody>
-            <MajorForms
+            <SubjectForms
               handleOnchange={handleOnchange}
-              majorForm={majorForm}
+              subjectForm={subjectForm}
               faculty={faculty}
             />
           </ModalBody>
@@ -107,4 +107,4 @@ function MajorModals({ isModalOpen, closeModal , faculty }) {
   );
 }
 
-export default MajorModals;
+export default SubjectModals;

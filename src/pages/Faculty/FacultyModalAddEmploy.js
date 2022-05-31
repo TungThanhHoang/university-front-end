@@ -1,16 +1,14 @@
 import React, { useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch , useSelector} from "react-redux";
 import { ToastContainer, toast } from "react-toastify";
 import facultySlice, {
   addFaculty,
   getFaculty,
   findFacultyView,
-} from "../Faculty/facultySlice";
-import {
   updateEmployeePositionFaculty,
-  getEmployeePositionFaculty,
-} from "../../pages/Employee/employeeSlice";
-
+} from "../Faculty/facultySlice";
+import { getEmployeePositionFaculty } from "../../pages/Employee/employeeSlice";
+import {findIdFacultyViewSelector} from '../../redux/selector'
 import {
   Modal,
   ModalHeader,
@@ -30,6 +28,7 @@ function FacultyModalAddEmploy({
   formPositionFaculty,
 }) {
   const dispatch = useDispatch();
+  const idFacultyView = useSelector(findIdFacultyViewSelector);
   const { id_emp, id_pos_fac } = formPositionFaculty;
   const submitChange = async (event) => {
     event.preventDefault();
@@ -45,12 +44,13 @@ function FacultyModalAddEmploy({
       });
     }
     try {
-      const sendData = await dispatch(
-        updateEmployeePositionFaculty(formPositionFaculty)
+      await dispatch(
+        updateEmployeePositionFaculty({
+          id_emp: id_emp.trim(),
+          id_pos_fac: id_pos_fac,
+        })
       );
-      const data = unwrapResult(sendData);
-      await dispatch(findFacultyView(id));
-      await dispatch(getEmployeePositionFaculty());
+      await dispatch(findFacultyView(idFacultyView[0]?.id_fac));
       closeModal();
       toast.success(`Thêm Thành công`, {
         position: "top-right",

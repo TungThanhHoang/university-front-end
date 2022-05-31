@@ -15,6 +15,7 @@ import {
   findFacultySelector,
   findIdFacultySelector,
   findFacultyViewSelector,
+  findIdFacultyViewSelector
 } from "../../redux/selector";
 import PageTitle from "../../components/Typography/PageTitle";
 import {
@@ -44,7 +45,7 @@ function FacultyTables() {
   const facultyRecord = useSelector(findFacultySelector);
   const facultyRecordView = useSelector(findFacultyViewSelector);
   const facultyId = useSelector(findIdFacultySelector);
-
+  const idFacultyView = useSelector(findIdFacultyViewSelector);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isModalUpdate, setIsModalUpdate] = useState(false);
   const [isModalView, setIsModalView] = useState(false);
@@ -78,7 +79,6 @@ function FacultyTables() {
       try {
         const results = await dispatch(getFaculty());
         const data = unwrapResult(results);
-        console.log(data);
       } catch (error) {
         console.log(error);
       }
@@ -101,12 +101,11 @@ function FacultyTables() {
   // Open Modal View
   const openModalView = async (id) => {
     try {
+      await dispatch(facultySlice.actions.findIdView(id));
       const result = await dispatch(findFacultyView(id));
       await dispatch(getPositionFaculty(id));
       const data = unwrapResult(result);
-      if (data) {
-        setIsModalView(true);
-      }
+      setIsModalView(true);
     } catch (error) {
       console.log(error);
     }
@@ -178,7 +177,7 @@ function FacultyTables() {
           id={facultyId[0].id_fac}
         />
       )}
-      {facultyRecordView !== null && (
+      {idFacultyView !== null && (
         <FacultyModalView
           isModalOpen={isModalView}
           closeModal={closeModalView}

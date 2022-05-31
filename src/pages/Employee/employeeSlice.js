@@ -81,17 +81,6 @@ export const addEmployee = createAsyncThunk(
     }
   }
 );
-export const updateEmployeePositionFaculty = createAsyncThunk(
-  "employee/updateEmployeePositionFac",
-  async (data, thunkAPI) => {
-    try {
-      const response = await axios.post(`${API_URL}/employee/${data.id_emp}/update-position`, data);
-      return response.data.data.recordset;
-    } catch (error) {
-      return thunkAPI.rejectWithValue(error.response.data);
-    }
-  }
-);
 
 
 const employeeSlice = createSlice({
@@ -202,17 +191,7 @@ const employeeSlice = createSlice({
       state.loading = false;
       state.error = action.payload.msg;
     },
-    [updateEmployeePositionFaculty.pending]: (state, action) => {
-      state.loading = true;
-    },
-    [updateEmployeePositionFaculty.fulfilled]: (state, action) => {
-      state.loading = false;
-      state.error = null;
-    },
-    [updateEmployeePositionFaculty.rejected]: (state, action) => {
-      state.loading = false;
-      state.error = action.payload.msg;
-    },
+   
   },
 });
 

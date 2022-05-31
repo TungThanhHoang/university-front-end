@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import {
   getFacultySelector,
+  getMajorSelector,
   getDepartmentSelector,
   getEmployeeSelector,
   findUniversitySelector,
@@ -9,6 +10,8 @@ import {
 import { getFaculty } from "../Faculty/facultySlice";
 import { getEmployee } from "../Employee/employeeSlice";
 import { getDepartment } from "../Department/departmentSlice";
+import { getMajor } from "../Major/majorSlice";
+import { getSubject } from "../Subject/subjectSlice";
 import { findUniversity } from "../../components/SelectUniversity/selectUniversitySlice";
 import InfoCard from "../../components/Cards/InfoCard";
 import ChartCard from "../../components/Chart/ChartCard";
@@ -36,6 +39,7 @@ import {
 function Dashboard() {
   const dispatch = useDispatch();
   const faculty = useSelector(getFacultySelector);
+  const major = useSelector(getMajorSelector);
   const department = useSelector(getDepartmentSelector);
   const employee = useSelector(getEmployeeSelector);
   const university = useSelector(findUniversitySelector);
@@ -45,6 +49,8 @@ function Dashboard() {
       dispatch(getFaculty()),
       dispatch(getDepartment()),
       dispatch(getEmployee()),
+      dispatch(getMajor()),
+      dispatch(getSubject()),
       dispatch(findUniversity()),
     ]);
   }, []);
@@ -98,7 +104,7 @@ function Dashboard() {
           />
         </InfoCard>
 
-        <InfoCard title="Chuyên ngành" value="35">
+        <InfoCard title="Chuyên ngành" value={major.length}>
           <RoundIcon
             icon={SubjectIcon}
             iconColorClass="text-teal-500 dark:text-teal-100"
@@ -113,7 +119,6 @@ function Dashboard() {
           <Doughnut {...doughnutOptions} />
           <ChartLegend legends={doughnutLegends} />
         </ChartCard>
-
       </div>
     </>
   );

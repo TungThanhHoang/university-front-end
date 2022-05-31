@@ -58,16 +58,7 @@ function EmployeeTables() {
   }
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const results = await dispatch(getEmployee());
-        const data = unwrapResult(results);
-        console.log(data);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-    fetchData();
+    Promise.all([dispatch(getEmployee())]);
   }, []);
 
   useEffect(() => {

@@ -1,4 +1,4 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { createSlice, createAsyncThunk, current } from "@reduxjs/toolkit";
 import axios from "axios";
 import { API_URL } from "../../constants";
 
@@ -19,7 +19,9 @@ export const findFaculty = createAsyncThunk(
   async (facultyId, thunkAPI) => {
     try {
       const flag = await localStorage.getItem("flag");
-      const response = await axios.get(`${API_URL}/faculty/${facultyId}/find/${flag}` );
+      const response = await axios.get(
+        `${API_URL}/faculty/${facultyId}/find/${flag}`
+      );
       return response.data.data.recordset;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response.data);
@@ -31,8 +33,9 @@ export const findFacultyView = createAsyncThunk(
   async (facultyId, thunkAPI) => {
     try {
       const flag = await localStorage.getItem("flag");
-      const response = await axios.get(`${API_URL}/faculty/${facultyId}/find/position-faculty/${flag}` );
-      await getFaculty();
+      const response = await axios.get(
+        `${API_URL}/faculty/${facultyId}/find/position-faculty/${flag}`
+      );
       return response.data.data.recordset;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response.data);
@@ -44,7 +47,9 @@ export const deleteFaculty = createAsyncThunk(
   async (facultyId, thunkAPI) => {
     try {
       const flag = await localStorage.getItem("flag");
-      const response = await axios.post(`${API_URL}/faculty/${facultyId}/delete/${flag}` );
+      const response = await axios.post(
+        `${API_URL}/faculty/${facultyId}/delete/${flag}`
+      );
       await getFaculty();
       return response.data.data.recordset;
     } catch (error) {
@@ -57,8 +62,10 @@ export const updateFaculty = createAsyncThunk(
   async (data, thunkAPI) => {
     try {
       const flag = await localStorage.getItem("flag");
-      const response = await axios.post(`${API_URL}/faculty/${data.id_fac}/update/${flag}` , data );
-      await getFaculty();
+      const response = await axios.post(
+        `${API_URL}/faculty/${data.id_fac}/update/${flag}`,
+        data
+      );
       return response.data.data.recordset;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response.data);
@@ -69,7 +76,7 @@ export const addFaculty = createAsyncThunk(
   "faculty/addFaculty",
   async (data, thunkAPI) => {
     try {
-      const response = await axios.post(`${API_URL}/faculty/add` , data);
+      const response = await axios.post(`${API_URL}/faculty/add`, data);
       await getFaculty();
       return response.data.data.recordset;
     } catch (error) {
@@ -78,35 +85,65 @@ export const addFaculty = createAsyncThunk(
   }
 );
 
+export const updateEmployeePositionFaculty = createAsyncThunk(
+  "employee/updateEmployeePositionFac",
+  async (data, thunkAPI) => {
+    try {
+      const flag = await localStorage.getItem("flag");
+      const response = await axios.post(
+        `${API_URL}/employee/${data.id_emp}/update-position/${flag}`,
+        data
+      );
+      return response.data.data.recordset;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.response.data);
+    }
+  }
+);
 
 const facultySlice = createSlice({
   name: "faculty",
   initialState: {
     loading: false,
     faculty: [],
-    facultyRecord:null,
+    facultyRecord: null,
     idFaculty: null,
-    facultyRecordView:null
-
+    facultyRecordView: null,
+    idFacultyView: null,
   },
   reducers: {
     clearState: (state, action) => {
       state.facultyRecord = null;
-      state.facultyRecordView = null;  
+      state.facultyRecordView = null;
+      state.idFacultyView = null;
     },
     getFacultyAction: (state, action) => {
-      state.faculty = action.payload;  
+      state.faculty = action.payload;
     },
     deleteFacultyAction: (state, action) => {
-      state.faculty = state.faculty.filter( record => record.id_fac !== action.payload)
+      state.faculty = state.faculty.filter(
+        (record) => record.id_fac !== action.payload
+      );
     },
-    findIdDelete: (state , action) =>{
-      state.idFaculty = state.faculty.filter( record => record.id_fac === action.payload )
-    }
-    ,
-    updateFacultyAction: (state, action) => {
-      state.facultyRecord = state.facultyRecord.map( record => record.id_fac === action.payload.id_fac ? action.payload : record)
-    }
+    findIdDelete: (state, action) => {
+      state.idFaculty = state.faculty.filter(
+        (record) => record.id_fac === action.payload
+      );
+    },
+    findIdView: (state, action) => {
+      state.idFacultyView = state.faculty.filter(
+        (record) => record.id_fac === action.payload
+      );
+    },
+    updateFacultyEmployee: (state, action) => {
+      const { id, id_pos_fac } = action.payload;
+      const findData = state.facultyRecordView.find(
+        (item) => item.id_emp.replace(/ +(?= )/g, "") === id
+      );
+      if (findData) {
+        findData.id_pos_fac = Number(action.payload.id_pos_fac);
+      }
+    },
   },
   extraReducers: {
     [getFaculty.pending]: (state, action) => {
@@ -115,7 +152,7 @@ const facultySlice = createSlice({
     [getFaculty.fulfilled]: (state, action) => {
       state.loading = false;
       state.error = null;
-      state.faculty = action.payload
+      state.faculty = action.payload;
     },
     [getFaculty.rejected]: (state, action) => {
       state.loading = false;
@@ -177,8 +214,19 @@ const facultySlice = createSlice({
     [updateFaculty.rejected]: (state, action) => {
       state.loading = false;
       state.error = action.payload.msg;
-    }
-  }
+    },
+    [updateEmployeePositionFaculty.pending]: (state, action) => {
+      state.loading = true;
+    },
+    [updateEmployeePositionFaculty.fulfilled]: (state, action) => {
+      state.loading = false;
+      state.error = null;
+    },
+    [updateEmployeePositionFaculty.rejected]: (state, action) => {
+      state.loading = false;
+      state.error = action.payload.msg;
+    },
+  },
 });
 
 export default facultySlice;

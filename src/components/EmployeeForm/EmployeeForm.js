@@ -5,8 +5,7 @@ import SectionTitle from "../Typography/SectionTitle";
 import { Input, HelperText, Label, Select, Textarea } from "@windmill/react-ui";
 
 function EmployeeForms({ employeeForm, handleOnchange , job , academic}) {
- 
-console.log(employeeForm)
+
   const {
     id_emp,
     name_emp,

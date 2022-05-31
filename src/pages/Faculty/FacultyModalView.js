@@ -5,13 +5,14 @@ import facultySlice, {
   addFaculty,
   getFaculty,
   findFacultyView,
-  
+  updateEmployeePositionFaculty,
 } from "../Faculty/facultySlice";
 import { getPositionFaculty } from "../Faculty/positionFacultySlice";
-import { updateEmployeePositionFaculty ,getEmployeePositionFaculty } from "../../pages/Employee/employeeSlice";
+import { getEmployeePositionFaculty } from "../../pages/Employee/employeeSlice";
 import {
   findFacultyViewSelector,
   getPositionFacultySelector,
+  findIdFacultyViewSelector,
 } from "../../redux/selector";
 import {
   Modal,
@@ -20,7 +21,6 @@ import {
   ModalFooter,
   Button,
   TableContainer,
-  Table,
   TableHeader,
   TableBody,
   TableRow,
@@ -30,52 +30,55 @@ import {
   TableFooter,
   Pagination,
   Select,
+  Table,
 } from "@windmill/react-ui";
+import { EditIcon, TrashIcon, ViewIcon } from "../../icons/index";
 import FacultyForms from "../../components/FacultyForm/FacultyForms";
 import { unwrapResult } from "@reduxjs/toolkit";
 import FacultyModalAddEmploy from "./FacultyModalAddEmploy";
-
+import FacultyFormSelect from "../../components/FacultyForm/FacultyFormSelect";
+// import { Table } from "antd";
 function FacultyModalView({ isModalOpen, closeModal }) {
   const dispatch = useDispatch();
   const facultyRecordView = useSelector(findFacultyViewSelector);
   const positionFaculty = useSelector(getPositionFacultySelector);
-
-  console.log(facultyRecordView);
-
-  const [positionFacultyEmp, setpositionFacultyEmp] = useState("");
+  const idFacultyView = useSelector(findIdFacultyViewSelector);
   const [pageTable, setPageTable] = useState(1);
-  const [dataTable, setDataTable] = useState([]);
+  const [dataTable, setDataTable] = useState(facultyRecordView?.slice(0,5));
   const [isModalAdd, setIsModalAdd] = useState(false);
-
+  const [postAPI, setPostAPI] = useState({ id_emp: "", id_pos_fac: "" });
   const [formPositionFaculty, setFormFaculty] = useState({
     id_emp: "",
     id_pos_fac: "",
   });
-
   const handleOnchange = (e) => {
     setFormFaculty({ ...formPositionFaculty, [e.target.name]: e.target.value });
   };
-
-  console.log("pos", positionFacultyEmp);
   const handleChangePosition = async (event, id) => {
-    try {
-      await dispatch(
-        updateEmployeePositionFaculty({
-          id_pos_fac: event.target.value || null,
-          id_emp: id?.trim(),
+    const { value } = event.target;
+    Promise.all([
+      setPostAPI({ id_emp: id.trim(), id_pos_fac: value }),
+      dispatch(
+        facultySlice.actions.updateFacultyEmployee({
+          id: id?.replace(/ +(?= )/g, ""),
+          id_pos_fac: value,
         })
-      );
-       dispatch(findFacultyView(facultyRecordView[0]?.id_fac));
-       dispatch(getPositionFaculty(facultyRecordView[0]?.id_fac));
-      toast.success(`Cập nhật thành công`, {
-        position: "top-right",
-        autoClose: 3000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-      });
+      ),
+    ]);
+  };
+
+  useEffect(() => {
+    try {
+      Promise.all([dispatch(updateEmployeePositionFaculty(postAPI))]);
+      // toast.success(`Cập nhật thành công`, {
+      //   position: "top-right",
+      //   autoClose: 3000,
+      //   hideProgressBar: false,
+      //   closeOnClick: true,
+      //   pauseOnHover: true,
+      //   draggable: true,
+      //   progress: undefined,
+      // });
     } catch (error) {
       toast.error(`${error}`, {
         position: "top-right",
@@ -87,7 +90,8 @@ function FacultyModalView({ isModalOpen, closeModal }) {
         progress: undefined,
       });
     }
-  };
+    // dispatch(findFacultyView(idFacultyView[0].id_fac))
+  }, [postAPI]);
 
   useEffect(() => {
     setDataTable(
@@ -99,10 +103,11 @@ function FacultyModalView({ isModalOpen, closeModal }) {
   }, [pageTable]);
 
   //pagination
-  const resultsPerPage = 6;
+  const resultsPerPage = 5;
   const totalResults = facultyRecordView?.length;
 
   const openModalAdd = () => {
+    dispatch(getEmployeePositionFaculty())
     setIsModalAdd(true);
   };
 
@@ -115,24 +120,67 @@ function FacultyModalView({ isModalOpen, closeModal }) {
     setPageTable(p);
   };
 
+  const columns = [
+    {
+      title: "STT",
+      key: "id_emp",
+      render: (text, record, index) => index + 1,
+    },
+    {
+      title: "Nhân viên",
+      dataIndex: "name_emp",
+      key: "name_emp",
+    },
+    {
+      title: "Số điện thoại",
+      dataIndex: "mobile_emp",
+      key: "mobile_emp",
+    },
+    {
+      title: "Email",
+      dataIndex: "email_emp",
+      key: "email_emp",
+    },
+    {
+      title: "Công việc",
+      dataIndex: "name_job",
+      key: "name_job",
+    },
+    {
+      title: "Chức vụ",
+      dataIndex: "id_pos_fac",
+      key: "id_pos_fac",
+      render: (_, item) => {
+        return (
+          <FacultyFormSelect
+            handleOnchange={handleChangePosition}
+            positionFaculty={positionFaculty}
+            id_pos_fac={item.id_pos_fac}
+            id_emp={item.id_emp}
+          />
+        );
+      },
+    },
+  ];
+
   return (
     <>
       <ToastContainer />
       <FacultyModalAddEmploy
         isModalOpen={isModalAdd}
         closeModal={closeModalAdd}
-        id={facultyRecordView[0]?.id_fac}
+        id={idFacultyView[0]?.id_fac}
         handleOnchange={handleOnchange}
         formPositionFaculty={formPositionFaculty}
       />
       {isModalOpen && (
         <div className="fixed inset-0 z-40 flex items-end bg-black bg-opacity-50 sm:items-center sm:justify-center appear-done enter-done">
           <div className="w-full px-6 py-4 overflow-hidden bg-white rounded-t-lg dark:bg-gray-800 sm:rounded-lg sm:m-4 sm:max-w-4xl appear-done enter-done">
-            <form>
+            <div>
               <ModalBody>
                 <div className="flex justify-between">
                   <div className="capitalize font-semibold text-lg">
-                    {facultyRecordView[0]?.name_fac}
+                    {idFacultyView[0]?.name_fac}
                   </div>
                   <div>
                     <Button layout="outline">Thêm Chức Vụ</Button>
@@ -145,8 +193,8 @@ function FacultyModalView({ isModalOpen, closeModal }) {
                     </Button>
                   </div>
                 </div>
-                <div>
-                  {dataTable.length === 0 ? (
+                <form>
+                  {facultyRecordView === null ? (
                     "Không có dữ liệu"
                   ) : (
                     <TableContainer className="mt-6  overflow-auto">
@@ -161,7 +209,7 @@ function FacultyModalView({ isModalOpen, closeModal }) {
                           </TableRow>
                         </TableHeader>
                         <TableBody>
-                          {facultyRecordView?.map((item, index) => {
+                          {dataTable?.map((item, index) => {
                             return (
                               <TableRow key={index}>
                                 <TableCell>{index + 1}</TableCell>
@@ -186,26 +234,12 @@ function FacultyModalView({ isModalOpen, closeModal }) {
                                     {item.name_job}
                                   </span>
                                 </TableCell>
-                                <TableCell>
-                                  <Select
-                                    className="mt-1"
-                                    name="id_pos_fac"
-                                    value={item.id_pos_fac}
-                                    onChange={(e) =>
-                                      handleChangePosition(e, item.id_emp)
-                                    }
-                                  >
-                                    <option value="">--Không chọn--</option>
-                                    {positionFaculty?.map((pos, index) => (
-                                      <option
-                                        key={index}
-                                        value={pos.id_pos_fac}
-                                      >
-                                        {pos.name_pos_fac}
-                                      </option>
-                                    ))}
-                                  </Select>
-                                </TableCell>
+                                <FacultyFormSelect
+                                  handleOnchange={handleChangePosition}
+                                  positionFaculty={positionFaculty}
+                                  id_pos_fac={item.id_pos_fac}
+                                  id_emp={item.id_emp}
+                                />
                               </TableRow>
                             );
                           })}
@@ -220,8 +254,15 @@ function FacultyModalView({ isModalOpen, closeModal }) {
                         />
                       </TableFooter>
                     </TableContainer>
+                    // <Table
+                    //   className="p-0"
+                    //   rowKey="id"
+                    //   dataSource={facultyRecordView}
+                    //   columns={columns}
+                    //   pagination={{ pageSize: 5 }}
+                    // />
                   )}
-                </div>
+                </form>
               </ModalBody>
               <ModalFooter>
                 <div className="hidden sm:block">
@@ -233,7 +274,7 @@ function FacultyModalView({ isModalOpen, closeModal }) {
                   </Button>
                 </div>
               </ModalFooter>
-            </form>
+            </div>
           </div>
         </div>
       )}

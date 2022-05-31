@@ -2,25 +2,25 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 import { API_URL } from "../../constants";
 
-export const getMajor = createAsyncThunk(
-  "major/getMajor",
+export const getSubject = createAsyncThunk(
+  "subject/getSubject",
   async (data, thunkAPI) => {
     try {
       const flag = await localStorage.getItem("flag");
-      const response = await axios.get(`${API_URL}/major/${flag}`);
+      const response = await axios.get(`${API_URL}/subject/${flag}`);
       return response.data.data.recordset;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response.data);
     }
   }
 );
-export const findMajor = createAsyncThunk(
-  "major/findMajor",
+export const findSubject = createAsyncThunk(
+  "subject/findSubject",
   async (jobId, thunkAPI) => {
     try {
       const flag = await localStorage.getItem("flag");
       const response = await axios.get(
-        `${API_URL}/major/${jobId}/find/${flag}`
+        `${API_URL}/subject/${jobId}/find/${flag}`
       );
       //   await getFaculty();
       return response.data.data.recordset;
@@ -29,13 +29,13 @@ export const findMajor = createAsyncThunk(
     }
   }
 );
-export const deleteMajor = createAsyncThunk(
-  "major/deleteMajor",
+export const deleteSubject = createAsyncThunk(
+  "subject/deleteSubject",
   async (jobId, thunkAPI) => {
     try {
       const flag = await localStorage.getItem("flag");
       const response = await axios.post(
-        `${API_URL}/major/${jobId}/delete/${flag}`
+        `${API_URL}/subject/${jobId}/delete/${flag}`
       );
       return response.data.data.recordset;
     } catch (error) {
@@ -43,13 +43,13 @@ export const deleteMajor = createAsyncThunk(
     }
   }
 );
-export const updateMajor = createAsyncThunk(
-  "major/updateMajor",
+export const updateSubject = createAsyncThunk(
+  "subject/updateSubject",
   async (data, thunkAPI) => {
     try {
       const flag = await localStorage.getItem("flag");
       const response = await axios.post(
-        `${API_URL}/major/${data.id_major}/update/${flag}`,
+        `${API_URL}/subject/${data.id_subject}/update/${flag}`,
         data
       );
       return response.data.data.recordset;
@@ -58,106 +58,106 @@ export const updateMajor = createAsyncThunk(
     }
   }
 );
-export const addMajor = createAsyncThunk("major/addMajor", async (data, thunkAPI) => {
+export const addSubject = createAsyncThunk("subject/addSubject", async (data, thunkAPI) => {
   try {
     const flag = await localStorage.getItem("flag");
-    const response = await axios.post(`${API_URL}/major/add/${flag}`, data);
+    const response = await axios.post(`${API_URL}/subject/add/${flag}`, data);
     return response.data.data.recordset;
   } catch (error) {
     return thunkAPI.rejectWithValue(error.response.data);
   }
 });
 
-const majorSlice = createSlice({
-  name: "major",
+const subjectSlice = createSlice({
+  name: "subject",
   initialState: {
     loading: false,
-    major: [],
-    majorRecord: null,
-    idMajor: null,
+    subject: [],
+    subjectRecord: null,
+    idSubject: null,
   },
   reducers: {
     clearState: (state, action) => {
-      state.majorRecord = null;
+      state.subjectRecord = null;
     },
-    getMajorAction: (state, action) => {
-      state.major = action.payload;
+    getSubjectAction: (state, action) => {
+      state.subject = action.payload;
     },
-    deleteMajorAction: (state, action) => {
-      state.major = state.major.filter(
-        (record) => record.id_major !== action.payload
+    deleteSubjectAction: (state, action) => {
+      state.subject = state.subject.filter(
+        (record) => record.id_subject !== action.payload
       );
     },
     findIdDelete: (state, action) => {
-      state.idMajor = state.major.filter(
-        (record) => record.id_major === action.payload
+      state.idSubject = state.subject.filter(
+        (record) => record.id_subject === action.payload
       );
     },
-    updateMajorAction: (state, action) => {
-      state.jobRecord = state.majorRecord.map((record) =>
-        record.id_major === action.payload.id_major ? action.payload : record
+    updateSubjectAction: (state, action) => {
+      state.subjectRecord = state.subjectRecord.map((record) =>
+        record.id_subject === action.payload.id_subject ? action.payload : record
       );
     },
   },
   extraReducers: {
-    [getMajor.pending]: (state, action) => {
+    [getSubject.pending]: (state, action) => {
       state.loading = true;
     },
-    [getMajor.fulfilled]: (state, action) => {
+    [getSubject.fulfilled]: (state, action) => {
       state.loading = false;
       state.error = null;
-      state.major = action.payload;
+      state.subject = action.payload;
     },
-    [getMajor.rejected]: (state, action) => {
+    [getSubject.rejected]: (state, action) => {
       state.loading = false;
       state.error = action.payload.msg;
     },
-    [findMajor.pending]: (state, action) => {
+    [findSubject.pending]: (state, action) => {
       state.loading = true;
     },
-    [findMajor.fulfilled]: (state, action) => {
+    [findSubject.fulfilled]: (state, action) => {
       state.loading = false;
       state.error = null;
-      state.majorRecord = action.payload;
+      state.subjectRecord = action.payload;
     },
-    [findMajor.rejected]: (state, action) => {
+    [findSubject.rejected]: (state, action) => {
       state.loading = false;
       state.error = action.payload.msg;
     },
-    [addMajor.pending]: (state, action) => {
+    [addSubject.pending]: (state, action) => {
       state.loading = true;
     },
-    [addMajor.fulfilled]: (state, action) => {
+    [addSubject.fulfilled]: (state, action) => {
       state.loading = false;
       state.error = null;
     },
-    [addMajor.rejected]: (state, action) => {
+    [addSubject.rejected]: (state, action) => {
       state.loading = false;
       state.error = action.payload.msg;
     },
-    [deleteMajor.pending]: (state, action) => {
+    [deleteSubject.pending]: (state, action) => {
       state.loading = true;
     },
-    [deleteMajor.fulfilled]: (state, action) => {
+    [deleteSubject.fulfilled]: (state, action) => {
       state.loading = false;
       state.error = null;
     },
-    [deleteMajor.rejected]: (state, action) => {
+    [deleteSubject.rejected]: (state, action) => {
       state.loading = false;
       state.error = action.payload.msg;
     },
-    [updateMajor.pending]: (state, action) => {
+    [updateSubject.pending]: (state, action) => {
       state.loading = true;
     },
-    [updateMajor.fulfilled]: (state, action) => {
+    [updateSubject.fulfilled]: (state, action) => {
       state.loading = false;
       state.error = null;
     },
-    [updateMajor.rejected]: (state, action) => {
+    [updateSubject.rejected]: (state, action) => {
       state.loading = false;
       state.error = action.payload.msg;
     },
   },
 });
 
-export default majorSlice;
+export default subjectSlice;

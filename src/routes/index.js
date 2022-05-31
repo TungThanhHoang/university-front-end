@@ -15,6 +15,8 @@ const DepartmentTables = lazy(() =>
 );
 const AcademicTables = lazy(() => import("../pages/Academic/AcademicTables"));
 const JobTables = lazy(() => import("../pages/Job/JobTables"));
+const MajorTables = lazy(() => import("../pages/Major/MajorTables"));
+const SubjectTables = lazy(() => import("../pages/Subject/SubjectTables"));
 const EmployeeTables = lazy(() => import("../pages/Employee/EmployeeTables"));
 const Page404 = lazy(() => import("../pages/404"));
 const Blank = lazy(() => import("../pages/Blank"));
@@ -44,11 +46,11 @@ if (isFlag === "UDN") {
     },
     {
       path: "/major",
-      component: Charts,
+      component: Page404,
     },
     {
       path: "/subject",
-      component: Buttons,
+      component: Page404,
     },
     {
       path: "/modals",
@@ -95,11 +97,11 @@ if (isFlag === "UDN") {
     },
     {
       path: "/major",
-      component: Page404,
+      component: MajorTables,
     },
     {
       path: "/subject",
-      component: Page404,
+      component: SubjectTables,
     },
     {
       path: "/modals",

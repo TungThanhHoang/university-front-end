@@ -148,7 +148,7 @@ function DepartmentTables() {
       <PageTitle>
         <div className="flex justify-between">
           <div>Phòng ban</div>
-          <Button onClick={openModal}>Thêm khoa</Button>
+          <Button onClick={openModal}>Thêm phòng ban</Button>
         </div>
       </PageTitle>
 

@@ -15,12 +15,14 @@ export const findUniversityMainSelector = (state) => state.selectUniversity.univ
 export const getTokenSelector = (state) => state.authLogin.isAuth;
 export const getErrorAuthSelector = (state) => state.authLogin.error;
 export const getUserAuthSelector = (state) => state.authLogin.user;
-
+    
 // Selector Faculty
 export const getFacultySelector = (state) => state.faculty.faculty;
 export const findFacultySelector = (state) => state.faculty.facultyRecord;
 export const findFacultyViewSelector = (state) => state.faculty.facultyRecordView;
 export const findIdFacultySelector = (state) => state.faculty.idFaculty;
+export const findIdFacultyViewSelector = (state) => state.faculty.idFacultyView;
+
 
 // Selector Position faculty
 
@@ -38,6 +40,16 @@ export const notifyDeleteSelector = (state) => state.notifyDelete.isOpen;
 export const getJobSelector = (state) => state.job.job;
 export const findJobSelector = (state) => state.job.jobRecord;
 export const findIdJobSelector = (state) => state.job.idJob;
+
+// Selector Major
+export const getMajorSelector = (state) => state.major.major;
+export const findMajorSelector = (state) => state.major.majorRecord;
+export const findIdMajorSelector = (state) => state.major.idMajor;
+
+// Selector Subject
+export const getSubjectSelector = (state) => state.subject.subject;
+export const findSubjectSelector = (state) => state.subject.subjectRecord;
+export const findIdSubjectSelector = (state) => state.subject.idSubject;
 
 // Selector Academic
 export const getAcademicSelector = (state) => state.academic.academic;
