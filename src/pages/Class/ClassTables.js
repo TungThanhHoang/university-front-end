@@ -1,18 +1,19 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { ToastContainer, toast } from "react-toastify";
-import departmentSlice, {
-  getDepartment,
-  deleteDepartment,
-  updateDepartment,
-  findDepartment,
-} from "./departmentSlice";
+import classSlice, {
+  getClass,
+  deleteClass,
+  updateClass,
+  findClass,
+} from "./classSlice";
 import notifyDeleteSlice from "../../components/NotifyDelete/notifyDeleteSlice";
 import {
-  getDepartmentSelector,
+  getMajorSelector,
+  getClassSelector,
   notifyDeleteSelector,
-  findDepartmentSelector,
-  findIdDepartmentSelector,
+  findClassSelector,
+  findIdClassSelector,
 } from "../../redux/selector";
 import PageTitle from "../../components/Typography/PageTitle";
 import {
@@ -28,20 +29,21 @@ import {
   Pagination,
 } from "@windmill/react-ui";
 
-import DepartmentModals from "../Department/DepartmentModals";
-import DepartmentUpdateModals from "../Department/DepartmentUpdateModal";
+import ClassModals from "../Class/ClassModals";
+import ClassUpdateModals from "../Class/ClassUpdateModal";
 import { unwrapResult } from "@reduxjs/toolkit";
 import NotifyDelete from "../../components/NotifyDelete/NotifyDelete";
 import ActionTable from "../../components/ActionTable";
+import { getMajor } from "../Major/majorSlice";
 
-function DepartmentTables() {
+function MajorTables() {
   const dispatch = useDispatch();
-  const department = useSelector(getDepartmentSelector);
-  const departmentRecord = useSelector(findDepartmentSelector);
-  const departmentId = useSelector(findIdDepartmentSelector);
+  const classUni = useSelector(getClassSelector);
+  const classRecord = useSelector(findClassSelector);
+  const classId = useSelector(findIdClassSelector);
+  const major = useSelector(getMajorSelector);
 
-  console.log(departmentRecord);
-  const response = department?.concat([]);
+  const response = classUni?.concat([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isModalUpdate, setIsModalUpdate] = useState(false);
 
@@ -55,7 +57,7 @@ function DepartmentTables() {
 
   function closeModalUpdate() {
     setIsModalUpdate(false);
-    dispatch(departmentSlice.actions.clearState());
+    dispatch(classSlice.actions.clearState());
   }
 
   const [pageTable, setPageTable] = useState(1);
@@ -66,18 +68,9 @@ function DepartmentTables() {
   const resultsPerPage = 10;
   const totalResults = response?.length;
 
-//   useEffect(() => {
-//     const fetchData = async () => {
-//       try {
-//         const results = await dispatch(getDepartment());
-//         const data = unwrapResult(results);
-//         console.log(data);
-//       } catch (error) {
-//         console.log(error);
-//       }
-//     };
-//     fetchData();
-//   }, []);
+  useEffect(() => {
+    Promise.all([dispatch(getMajor()), dispatch(getClass())]);
+  }, []);
 
   useEffect(() => {
     setDataTable(
@@ -94,7 +87,7 @@ function DepartmentTables() {
 
   const openModalUpdate = async (id) => {
     try {
-      const result = await dispatch(findDepartment(id));
+      const result = await dispatch(findClass(id));
       const data = unwrapResult(result);
       // dispatch(facultySlice.actions.updateFacultyAction(id));
       if (data) {
@@ -106,7 +99,7 @@ function DepartmentTables() {
   };
 
   const openModalDelete = (id) => {
-    dispatch(departmentSlice.actions.findIdDelete(id));
+    dispatch(classSlice.actions.findIdDelete(id));
     dispatch(notifyDeleteSlice.actions.open());
   };
 
@@ -116,9 +109,9 @@ function DepartmentTables() {
 
   const handleConfirmDelete = async (id) => {
     try {
-      const results = await dispatch(deleteDepartment(id));
+      const results = await dispatch(deleteClass(id.trim()));
       const data = unwrapResult(results);
-      await dispatch(departmentSlice.actions.deleteDepartmentAction(id));
+      await dispatch(classSlice.actions.deleteClassAction(id.trim()));
       handleCloseModal();
       toast.success(`Xóa Thành công`, {
         position: "top-right",
@@ -147,64 +140,71 @@ function DepartmentTables() {
       <ToastContainer />
       <PageTitle>
         <div className="flex justify-between">
-          <div>Phòng ban</div>
-          <Button onClick={openModal}>Thêm phòng ban</Button>
+          <div>Lớp học</div>
+          <Button onClick={openModal}>Thêm lớp học</Button>
         </div>
       </PageTitle>
 
-      {departmentId !== null && (
+      {classId !== null && (
         <NotifyDelete
           handleConfirmDelete={handleConfirmDelete}
           handleCloseModal={handleCloseModal}
-          id={departmentId[0].id_dep}
-
+          id={classId[0].id_class.trim()}
         />
       )}
-      <DepartmentModals isModalOpen={isModalOpen} closeModal={closeModal} />
-      {departmentRecord !== null && (
-        <DepartmentUpdateModals
+      <ClassModals
+        major={major}
+        isModalOpen={isModalOpen}
+        closeModal={closeModal}
+      />
+      {classRecord !== null && (
+        <ClassUpdateModals
           isModalOpen={isModalUpdate}
           openModalUpdate={openModalUpdate}
           closeModal={closeModalUpdate}
+          major={major}
         />
       )}
-      <TableContainer className="mb-8">
+      <TableContainer className="mb-8 ">
         <Table>
           <TableHeader>
             <tr>
               <TableCell>STT</TableCell>
-              <TableCell>Phòng ban</TableCell>
-              <TableCell>Số điện thoại</TableCell>
-              <TableCell>Miêu tả</TableCell>
+              <TableCell>Tên lớp</TableCell>
+              <TableCell>Chuyên ngành</TableCell>
+              <TableCell>Khóa</TableCell>
               <TableCell>Hành động</TableCell>
             </tr>
           </TableHeader>
           <TableBody>
-            {department?.map((item, i) => (
+            {classUni?.map((item, i) => (
               <TableRow key={i}>
                 <TableCell>{i + 1}</TableCell>
                 <TableCell>
                   <div className="flex items-center text-sm">
                     <div>
                       <p className="font-semibold capitalize">
-                        {item.name_dep}
-                      </p>
-                      <p className="text-xs text-gray-600 dark:text-gray-400">
-                        {item.id_code}
+                        {item.name_class}
                       </p>
                     </div>
                   </div>
                 </TableCell>
                 <TableCell>
-                  <span className="text-sm">{item.phone_dep}</span>
+                  <div className="flex items-center text-sm">
+                    <p className="font-semibold capitalize">
+                      {item.name_major}
+                    </p>
+                  </div>
                 </TableCell>
-                <TableCell className="">
-                  <span className="text-sm ">{item.descript_dep}</span>
+                <TableCell>
+                  <div className="flex items-center text-sm">
+                    <p className="font-semibold capitalize">{item.course}</p>
+                  </div>
                 </TableCell>
                 <ActionTable
                   openModalUpdate={openModalUpdate}
                   openModalDelete={openModalDelete}
-                  id={item.id_dep}
+                  id={item.id_class}
                   viewAction={true}
                 />
               </TableRow>
@@ -224,4 +224,4 @@ function DepartmentTables() {
   );
 }
 
-export default DepartmentTables;
+export default MajorTables;

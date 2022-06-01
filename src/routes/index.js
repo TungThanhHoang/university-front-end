@@ -17,7 +17,9 @@ const AcademicTables = lazy(() => import("../pages/Academic/AcademicTables"));
 const JobTables = lazy(() => import("../pages/Job/JobTables"));
 const MajorTables = lazy(() => import("../pages/Major/MajorTables"));
 const SubjectTables = lazy(() => import("../pages/Subject/SubjectTables"));
+const ClassTables = lazy(() => import("../pages/Class/ClassTables"));
 const EmployeeTables = lazy(() => import("../pages/Employee/EmployeeTables"));
+const StudentTables = lazy(() => import("../pages/Student/StudentTables"));
 const Page404 = lazy(() => import("../pages/404"));
 const Blank = lazy(() => import("../pages/Blank"));
 const isFlag = localStorage.getItem("flag").trim();
@@ -104,12 +106,12 @@ if (isFlag === "UDN") {
       component: SubjectTables,
     },
     {
-      path: "/modals",
-      component: Modals,
+      path: "/class",
+      component: ClassTables,
     },
     {
       path: "/students",
-      component: Page404,
+      component: StudentTables,
     },
     {
       path: "/marks",

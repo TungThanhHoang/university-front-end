@@ -229,6 +229,7 @@ function FacultyTables() {
                   openModalDelete={openModalDelete}
                   openModalView={openModalView}
                   id={item.id_fac}
+                  viewAction={true}
                 />
               </TableRow>
             ))}

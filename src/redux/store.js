@@ -7,8 +7,10 @@ import departmentSlice from '../pages/Department/departmentSlice'
 import jobSlice from '../pages/Job/jobSlice'
 import majorSlice from '../pages/Major/majorSlice'
 import subjectSlice from '../pages/Subject/subjectSlice'
+import classSlice from '../pages/Class/classSlice'
 import academicSlice from '../pages/Academic/academicSlice'
 import employeeSlice from '../pages/Employee/employeeSlice'
+import studentSlice from '../pages/Student/studentSlice'
 import memUniversitySlice from '../pages/MemberUniversity/memberUniversitySlice'
 import notifyDeleteSlice from '../components/NotifyDelete/notifyDeleteSlice'
 const store = configureStore({
@@ -20,9 +22,11 @@ const store = configureStore({
         notifyDelete: notifyDeleteSlice.reducer,
         job: jobSlice.reducer,
         major: majorSlice.reducer,
+        class: classSlice.reducer,
         subject: subjectSlice.reducer,
         academic: academicSlice.reducer,
         employee: employeeSlice.reducer,
+        student: studentSlice.reducer,
         memberUniversity: memUniversitySlice.reducer,
         positionFaculty: positionFacultySlice.reducer,
 

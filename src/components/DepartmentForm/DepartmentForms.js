@@ -12,10 +12,10 @@ function DepartmentForms({ departmentForm, handleOnchange  }) {
       <PageTitle>Forms</PageTitle>
       <div className="px-4 py-3 mb-8 ">
         <Label>
-          <span>Tên khoa</span>
+          <span>Tên phòng ban</span>
           <Input
             className="mt-1"
-            placeholder="Khoa"
+            placeholder="Phòng ban"
             name="name_dep"
             value={name_dep?.replace(/ +(?= )/g,'')}
             onChange={handleOnchange}
@@ -24,7 +24,7 @@ function DepartmentForms({ departmentForm, handleOnchange  }) {
 
         <div className="flex justify-between flex-col sm:flex-row">
           <Label className="mt-4">
-            <span>Mã khoa</span>
+            <span>Mã phòng ban</span>
             <Input
               className="mt-1"
               placeholder="Code"

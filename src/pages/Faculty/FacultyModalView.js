@@ -210,7 +210,7 @@ function FacultyModalView({ isModalOpen, closeModal }) {
                           </TableRow>
                         </TableHeader>
                         <TableBody>
-                          {dataTable?.map((item, index) => {
+                          {facultyRecordView?.map((item, index) => {
                             return (
                               <TableRow key={index}>
                                 <TableCell>{index + 1}</TableCell>
