@@ -17,7 +17,6 @@ import {
 } from "../../redux/selector";
 import PageTitle from "../../components/Typography/PageTitle";
 import {
-  Table,
   TableHeader,
   TableCell,
   TableBody,
@@ -28,6 +27,7 @@ import {
   Button,
   Pagination,
 } from "@windmill/react-ui";
+import { Table } from "antd";
 
 import MajorModals from "../Major/MajorModals";
 import MajorUpdateModals from "../Major/MajorUpdateModal";
@@ -134,7 +134,39 @@ function MajorTables() {
       });
     }
   };
-
+  const columns = [
+    {
+      title: "STT",
+      key: "stt",
+      render: (text, record, index) => index + 1,
+    },
+    {
+      title: "Chuyên ngành",
+      dataIndex: "name_major",
+      key: "name_major",
+    },
+    {
+      title: "Khoa",
+      dataIndex: "name_fac",
+      key: "name_fac",
+    },
+    {
+      title: "Hành động",
+      dataIndex: "action",
+      key: "action",
+      render: (_, item) => {
+        return (
+          <>
+            <ActionTable
+              openModalUpdate={openModalUpdate}
+              openModalDelete={openModalDelete}
+              id={item.id_major}
+            />
+          </>
+        );
+      },
+    },
+  ];
   return (
     <>
       <ToastContainer />
@@ -165,52 +197,13 @@ function MajorTables() {
           faculty={faculty}
         />
       )}
-      <TableContainer className="mb-8 ">
-        <Table>
-          <TableHeader>
-            <tr>
-              <TableCell>STT</TableCell>
-              <TableCell>Chuyên ngành</TableCell>
-              <TableCell>Khoa</TableCell>
-              <TableCell>Hành động</TableCell>
-            </tr>
-          </TableHeader>
-          <TableBody>
-            {major?.map((item, i) => (
-              <TableRow key={i}>
-                <TableCell>{i + 1}</TableCell>
-                <TableCell>
-                  <div className="flex items-center text-sm">
-                    <div>
-                      <p className="font-semibold capitalize">
-                        {item.name_major}
-                      </p>
-                    </div>
-                  </div>
-                </TableCell>
-                <TableCell>
-                  <div className="flex items-center text-sm">
-                    <p className="font-semibold capitalize">{item.name_fac}</p>
-                  </div>
-                </TableCell>
-                <ActionTable
-                  openModalUpdate={openModalUpdate}
-                  openModalDelete={openModalDelete}
-                  id={item.id_major}
-                />
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-        <TableFooter>
-          <Pagination
-            totalResults={totalResults}
-            resultsPerPage={resultsPerPage}
-            onChange={onPageChangeTable}
-            label="Table navigation"
-          />
-        </TableFooter>
-      </TableContainer>
+      <Table
+        className="p-0 dark:bg-gray-80"
+        keyRow="id"
+        dataSource={major}
+        columns={columns}
+        pagination={{ pageSize: 10 }}
+      />
     </>
   );
 }

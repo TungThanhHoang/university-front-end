@@ -2,6 +2,17 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 import { API_URL } from "../../constants";
 
+export const getStudentAll = createAsyncThunk(
+  "student/getStudentAll",
+  async (data, thunkAPI) => {
+    try {
+      const response = await axios.get(`${API_URL}/student/all`);
+      return response.data.data.recordset;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.response.data);
+    }
+  }
+);
 export const getStudent = createAsyncThunk(
   "student/getStudent",
   async (data, thunkAPI) => {
@@ -92,6 +103,7 @@ const studentSlice = createSlice({
   initialState: {
     loading: false,
     student: [],
+    studentAll: [],
     studentPositionFac: [],
     studentRecord: null,
     idStudent: null,
@@ -128,6 +140,19 @@ const studentSlice = createSlice({
     },
   },
   extraReducers: {
+
+    [getStudentAll.pending]: (state, action) => {
+      state.loading = true;
+    },
+    [getStudentAll.fulfilled]: (state, action) => {
+      state.loading = false;
+      state.error = null;
+      state.studentAll = action.payload;
+    },
+    [getStudentAll.rejected]: (state, action) => {
+      state.loading = false;
+      state.error = action.payload.msg;
+    },
     [getStudent.pending]: (state, action) => {
       state.loading = true;
     },

@@ -2,6 +2,17 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 import { API_URL } from "../../constants";
 
+export const getMajorAll = createAsyncThunk(
+  "major/getMajorAll",
+  async (data, thunkAPI) => {
+    try {
+      const response = await axios.get(`${API_URL}/major/all`);
+      return response.data.data.recordset;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.response.data);
+    }
+  }
+);
 export const getMajor = createAsyncThunk(
   "major/getMajor",
   async (data, thunkAPI) => {
@@ -73,6 +84,7 @@ const majorSlice = createSlice({
   initialState: {
     loading: false,
     major: [],
+    majorAll:[],
     majorRecord: null,
     idMajor: null,
   },
@@ -100,6 +112,18 @@ const majorSlice = createSlice({
     },
   },
   extraReducers: {
+    [getMajorAll.pending]: (state, action) => {
+      state.loading = true;
+    },
+    [getMajorAll.fulfilled]: (state, action) => {
+      state.loading = false;
+      state.error = null;
+      state.majorAll = action.payload;
+    },
+    [getMajorAll.rejected]: (state, action) => {
+      state.loading = false;
+      state.error = action.payload.msg;
+    },
     [getMajor.pending]: (state, action) => {
       state.loading = true;
     },

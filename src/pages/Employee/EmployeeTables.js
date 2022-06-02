@@ -15,7 +15,7 @@ import {
 } from "../../redux/selector";
 import PageTitle from "../../components/Typography/PageTitle";
 import {
-  Table,
+  Avatar,
   TableHeader,
   TableCell,
   TableBody,
@@ -26,6 +26,7 @@ import {
   Button,
   Pagination,
 } from "@windmill/react-ui";
+import { Table } from "antd";
 
 import EmployeeModals from "../Employee/EmployeeModals";
 import EmployeeUpdateModals from "../Employee/EmployeeUpdateModal";
@@ -135,6 +136,111 @@ function EmployeeTables() {
     }
   };
 
+  const columns = [
+    {
+      title: "STT",
+      key: "stt",
+      render: (text, record, index) => index + 1,
+    },
+    {
+      title: "Nhân viên",
+      dataIndex: "name_emp",
+      key: "name_emp",
+      render: (_, item) => {
+        return (
+          <>
+            <div className="flex items-center text-sm">
+              <Avatar
+                src="https://res.cloudinary.com/i-h-c-n-ng/image/upload/v1649606919/avatar_4_otwwto.png"
+                alt="Judith"
+              />
+              <div className="ml-3">
+                <p className="font-semibold ">{item.name_emp}</p>
+                <p className="text-xs">{item.id_emp}</p>
+              </div>
+            </div>
+          </>
+        );
+      },
+    },
+    {
+      title: "Giới tính",
+      dataIndex: "gender_student",
+      key: "gender_student",
+      render: (_, item) => {
+        return (
+          <>
+            <p className="capitalize">{item.gender_emp}</p>
+          </>
+        );
+      },
+    },
+    {
+      title: "Ngày sinh",
+      dataIndex: "birthday_student",
+      key: "birthday_student",
+      render: (_, item) => {
+        return (
+          <>
+            <p className="">{formatDate(item.birthday_emp)}</p>
+          </>
+        );
+      },
+    },
+    {
+      title: "Liên lạc",
+      dataIndex: "mobile_student",
+      key: "hotile",
+      render: (_, item) => {
+        return (
+          <>
+            <p className="">0{item.mobile_emp}</p>
+            <p className=" ">{item.email_emp}</p>
+          </>
+        );
+      },
+    },
+    {
+      title: "Công việc",
+      dataIndex: "name_major",
+      key: "name_job",
+      render: (_, item) => {
+        return (
+          <>
+            <p className="">{item.name_job}</p>
+            <p className=" ">{item.name_academic}</p>
+          </>
+        );
+      },
+    },
+    {
+      title: "Quê quán",
+      dataIndex: "hometown_emp",
+      key: "hometown_emp",
+    },
+    {
+      title: "Địa chỉ",
+      dataIndex: "address_emp",
+      key: "address_emp",
+    },
+    {
+      title: "Hành động",
+      dataIndex: "action",
+      key: "action",
+      render: (_, item) => {
+        return (
+          <>
+            <ActionTable
+              openModalUpdate={openModalUpdate}
+              openModalDelete={openModalDelete}
+              id={item.id_emp.replace(/ +(?= )/g, "")}
+            />
+          </>
+        );
+      },
+    },
+  ];
+
   return (
     <>
       <ToastContainer />
@@ -160,108 +266,13 @@ function EmployeeTables() {
           closeModal={closeModalUpdate}
         />
       )}
-      <TableContainer className="mb-8">
-        <Table>
-          <TableHeader>
-            <tr>
-              <TableCell>STT</TableCell>
-              <TableCell>Tên Nhân Viên</TableCell>
-              <TableCell>Giới tính</TableCell>
-              <TableCell>Ngày Sinh</TableCell>
-              <TableCell>Quê Quán</TableCell>
-              <TableCell>Địa chỉ hiện tại</TableCell>
-              <TableCell>Học vấn</TableCell>
-              <TableCell>Số điện thoại</TableCell>
-              <TableCell>Email</TableCell>
-              <TableCell>Hành động</TableCell>
-            </tr>
-          </TableHeader>
-          <TableBody>
-            {dataTable?.map((item, i) => (
-              <TableRow key={i}>
-                <TableCell>{i + 1}</TableCell>
-                <TableCell>
-                  <div className="flex items-center text-sm">
-                    <div>
-                      <p className="font-semibold capitalize">
-                        {item.name_emp}
-                      </p>
-                      <p className="text-xs text-gray-600 dark:text-gray-400">
-                        {item.id_emp}
-                      </p>
-                    </div>
-                  </div>
-                </TableCell>
-                <TableCell>
-                  <div className="flex items-center text-sm">
-                    <div>
-                      <p className=" capitalize ">{item.gender_emp}</p>
-                    </div>
-                  </div>
-                </TableCell>
-                <TableCell>
-                  <div className="flex items-center text-sm">
-                    <div>
-                      <p className=" capitalize">
-                        {formatDate(item.birthday_emp)}
-                      </p>
-                    </div>
-                  </div>
-                </TableCell>
-                <TableCell>
-                  <div className="flex items-center text-sm">
-                    <div>
-                      <p className=" capitalize">{item.hometown_emp}</p>
-                    </div>
-                  </div>
-                </TableCell>
-                <TableCell>
-                  <div className="flex items-center text-sm">
-                    <div>
-                      <p className=" capitalize">{item.address_emp}</p>
-                    </div>
-                  </div>
-                </TableCell>
-                <TableCell>
-                  <div className="flex items-center text-sm">
-                    <div>
-                      <p className=" capitalize">{item.name_academic}</p>
-                      <p className=" capitalize">{item.name_job}</p>
-                    </div>
-                  </div>
-                </TableCell>
-                <TableCell>
-                  <div className="flex items-center text-sm">
-                    <div>
-                      <p className=" capitalize">{item.mobile_emp}</p>
-                    </div>
-                  </div>
-                </TableCell>
-                <TableCell>
-                  <div className="flex items-center text-sm">
-                    <div>
-                      <p className="">{item.email_emp}</p>
-                    </div>
-                  </div>
-                </TableCell>
-                <ActionTable
-                  openModalUpdate={openModalUpdate}
-                  openModalDelete={openModalDelete}
-                  id={item.id_emp.replace(/ +(?= )/g, "")}
-                />
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-        <TableFooter>
-          <Pagination
-            totalResults={totalResults}
-            resultsPerPage={resultsPerPage}
-            onChange={onPageChangeTable}
-            label="Table navigation"
-          />
-        </TableFooter>
-      </TableContainer>
+      <Table
+        className="p-0 dark:bg-gray-80"
+        keyRow="id"
+        dataSource={employee}
+        columns={columns}
+        pagination={{ pageSize: 10 }}
+      />
     </>
   );
 }

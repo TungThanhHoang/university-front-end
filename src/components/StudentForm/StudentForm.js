@@ -79,7 +79,7 @@ function StudentForms({ studentForm, handleOnchange, classUni, disableId }) {
             className="mt-1"
             placeholder="1990/01/10"
             name="birthday_student"
-            value={formatDate(birthday_student?.replace(/ +(?= )/g, ""))}
+            value={birthday_student ? formatDate(birthday_student?.replace(/ +(?= )/g, "")) : ""}
             onChange={handleOnchange}
           />
         </Label>

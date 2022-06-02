@@ -6,6 +6,7 @@ import classSlice, {
   deleteClass,
   updateClass,
   findClass,
+  findClassView,
 } from "./classSlice";
 import notifyDeleteSlice from "../../components/NotifyDelete/notifyDeleteSlice";
 import {
@@ -14,10 +15,10 @@ import {
   notifyDeleteSelector,
   findClassSelector,
   findIdClassSelector,
+  findIdClassViewSelector,
 } from "../../redux/selector";
 import PageTitle from "../../components/Typography/PageTitle";
 import {
-  Table,
   TableHeader,
   TableCell,
   TableBody,
@@ -28,6 +29,7 @@ import {
   Button,
   Pagination,
 } from "@windmill/react-ui";
+import { Table } from "antd";
 
 import ClassModals from "../Class/ClassModals";
 import ClassUpdateModals from "../Class/ClassUpdateModal";
@@ -35,6 +37,7 @@ import { unwrapResult } from "@reduxjs/toolkit";
 import NotifyDelete from "../../components/NotifyDelete/NotifyDelete";
 import ActionTable from "../../components/ActionTable";
 import { getMajor } from "../Major/majorSlice";
+import ClassModalView from "./ClassModalView";
 
 function MajorTables() {
   const dispatch = useDispatch();
@@ -42,10 +45,14 @@ function MajorTables() {
   const classRecord = useSelector(findClassSelector);
   const classId = useSelector(findIdClassSelector);
   const major = useSelector(getMajorSelector);
-
+  const idClassView = useSelector(findIdClassViewSelector);
   const response = classUni?.concat([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isModalUpdate, setIsModalUpdate] = useState(false);
+  const [isModalView, setIsModalView] = useState(false);
+
+  const [pageTable, setPageTable] = useState(1);
+  const [dataTable, setDataTable] = useState([]);
 
   function openModal() {
     setIsModalOpen(true);
@@ -60,10 +67,20 @@ function MajorTables() {
     dispatch(classSlice.actions.clearState());
   }
 
-  const [pageTable, setPageTable] = useState(1);
+  function closeModalView() {
+    setIsModalView(false);
+    dispatch(classSlice.actions.clearState());
+  }
 
-  const [dataTable, setDataTable] = useState([]);
-
+  const openModalView = async (id) => {
+    try {
+      await dispatch(classSlice.actions.findIdView(id.trim()));
+      await dispatch(findClassView(id.trim()));
+      setIsModalView(true);
+    } catch (error) {
+      console.log(error);
+    }
+  };
   // pagination setup
   const resultsPerPage = 10;
   const totalResults = response?.length;
@@ -134,7 +151,51 @@ function MajorTables() {
       });
     }
   };
-
+  const columns = [
+    {
+      title: "STT",
+      key: "stt",
+      render: (text, record, index) => index + 1,
+    },
+    {
+      title: "Lớp",
+      dataIndex: "name_class",
+      key: "name_class",
+      render: (_, item) => {
+        return (
+          <>
+            <p className="font-semibold">{item.name_class}</p>
+          </>
+        );
+      },
+    },
+    {
+      title: "Chuyên ngành",
+      dataIndex: "name_major",
+      key: "name_major",
+    },
+    {
+      title: "Khóa",
+      dataIndex: "course",
+      key: "course",
+    },
+    {
+      title: "Liên lạc",
+      dataIndex: "mobile_student",
+      key: "hotile",
+      render: (_, item) => {
+        return (
+          <>
+            <ActionTable
+              openModalUpdate={openModalUpdate}
+              openModalDelete={openModalDelete}
+              id={item.id_class.trim()}
+            />
+          </>
+        );
+      },
+    },
+  ];
   return (
     <>
       <ToastContainer />
@@ -152,6 +213,9 @@ function MajorTables() {
           id={classId[0].id_class.trim()}
         />
       )}
+      {idClassView !== null && (
+        <ClassModalView isModalOpen={isModalView} closeModal={closeModalView} />
+      )}
       <ClassModals
         major={major}
         isModalOpen={isModalOpen}
@@ -165,61 +229,13 @@ function MajorTables() {
           major={major}
         />
       )}
-      <TableContainer className="mb-8 ">
-        <Table>
-          <TableHeader>
-            <tr>
-              <TableCell>STT</TableCell>
-              <TableCell>Tên lớp</TableCell>
-              <TableCell>Chuyên ngành</TableCell>
-              <TableCell>Khóa</TableCell>
-              <TableCell>Hành động</TableCell>
-            </tr>
-          </TableHeader>
-          <TableBody>
-            {classUni?.map((item, i) => (
-              <TableRow key={i}>
-                <TableCell>{i + 1}</TableCell>
-                <TableCell>
-                  <div className="flex items-center text-sm">
-                    <div>
-                      <p className="font-semibold capitalize">
-                        {item.name_class}
-                      </p>
-                    </div>
-                  </div>
-                </TableCell>
-                <TableCell>
-                  <div className="flex items-center text-sm">
-                    <p className="font-semibold capitalize">
-                      {item.name_major}
-                    </p>
-                  </div>
-                </TableCell>
-                <TableCell>
-                  <div className="flex items-center text-sm">
-                    <p className="font-semibold capitalize">{item.course}</p>
-                  </div>
-                </TableCell>
-                <ActionTable
-                  openModalUpdate={openModalUpdate}
-                  openModalDelete={openModalDelete}
-                  id={item.id_class}
-                  viewAction={true}
-                />
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-        <TableFooter>
-          <Pagination
-            totalResults={totalResults}
-            resultsPerPage={resultsPerPage}
-            onChange={onPageChangeTable}
-            label="Table navigation"
-          />
-        </TableFooter>
-      </TableContainer>
+      <Table
+        className="p-0 dark:bg-gray-80"
+        keyRow="id"
+        dataSource={classUni}
+        columns={columns}
+        pagination={{ pageSize: 10 }}
+      />
     </>
   );
 }

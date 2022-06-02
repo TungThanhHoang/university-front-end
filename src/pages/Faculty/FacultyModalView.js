@@ -30,8 +30,9 @@ import {
   TableFooter,
   Pagination,
   Select,
-  Table,
 } from "@windmill/react-ui";
+import { Table } from "antd";
+
 import { EditIcon, TrashIcon, ViewIcon } from "../../icons/index";
 import FacultyForms from "../../components/FacultyForm/FacultyForms";
 import { unwrapResult } from "@reduxjs/toolkit";
@@ -44,7 +45,7 @@ function FacultyModalView({ isModalOpen, closeModal }) {
   const positionFaculty = useSelector(getPositionFacultySelector);
   const idFacultyView = useSelector(findIdFacultyViewSelector);
   const [pageTable, setPageTable] = useState(1);
-  const [dataTable, setDataTable] = useState(facultyRecordView?.slice(0,5));
+  const [dataTable, setDataTable] = useState(facultyRecordView?.slice(0, 5));
   const [isModalAdd, setIsModalAdd] = useState(false);
   const [postAPI, setPostAPI] = useState({ id_emp: "", id_pos_fac: "" });
   const [formPositionFaculty, setFormFaculty] = useState({
@@ -90,7 +91,7 @@ function FacultyModalView({ isModalOpen, closeModal }) {
         progress: undefined,
       });
     }
-    
+
     // dispatch(findFacultyView(idFacultyView[0].id_fac))
   }, [postAPI]);
 
@@ -108,7 +109,7 @@ function FacultyModalView({ isModalOpen, closeModal }) {
   const totalResults = facultyRecordView?.length;
 
   const openModalAdd = () => {
-    dispatch(getEmployeePositionFaculty())
+    dispatch(getEmployeePositionFaculty());
     setIsModalAdd(true);
   };
 
@@ -176,10 +177,10 @@ function FacultyModalView({ isModalOpen, closeModal }) {
       />
       {isModalOpen && (
         <div className="fixed inset-0 z-40 flex items-end bg-black bg-opacity-50 sm:items-center sm:justify-center appear-done enter-done">
-          <div className="w-full px-6 py-4 overflow-hidden bg-white rounded-t-lg dark:bg-gray-800 sm:rounded-lg sm:m-4 sm:max-w-4xl appear-done enter-done">
+          <div className="w-full px-6 py-4 overflow-hidden bg-white rounded-t-lg dark:bg-gray-800 sm:rounded-lg sm:m-4 sm:max-w-5xl appear-done enter-done">
             <div>
               <ModalBody>
-                <div className="flex justify-between">
+                <div className="flex justify-between mb-5">
                   <div className="capitalize font-semibold text-lg">
                     {idFacultyView[0]?.name_fac}
                   </div>
@@ -198,70 +199,13 @@ function FacultyModalView({ isModalOpen, closeModal }) {
                   {facultyRecordView === null ? (
                     "Không có dữ liệu"
                   ) : (
-                    <TableContainer className="mt-6  overflow-auto">
-                      <Table>
-                        <TableHeader>
-                          <TableRow>
-                            <TableCell>STT</TableCell>
-                            <TableCell>Nhân viên</TableCell>
-                            <TableCell>Số điện thoại</TableCell>
-                            <TableCell>Công việc</TableCell>
-                            <TableCell>Chức vụ</TableCell>
-                          </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                          {facultyRecordView?.map((item, index) => {
-                            return (
-                              <TableRow key={index}>
-                                <TableCell>{index + 1}</TableCell>
-                                <TableCell>
-                                  <div className="flex items-center text-sm">
-                                    <Avatar
-                                      src="https://res.cloudinary.com/i-h-c-n-ng/image/upload/v1649606919/avatar_4_otwwto.png"
-                                      alt="Judith"
-                                    />
-                                    <span className="font-semibold ml-2">
-                                      {item.name_emp}
-                                    </span>
-                                  </div>
-                                </TableCell>
-                                <TableCell>
-                                  <span className="text-sm">
-                                    {item.mobile_emp}
-                                  </span>
-                                </TableCell>
-                                <TableCell>
-                                  <span className="text-sm">
-                                    {item.name_job}
-                                  </span>
-                                </TableCell>
-                                <FacultyFormSelect
-                                  handleOnchange={handleChangePosition}
-                                  positionFaculty={positionFaculty}
-                                  id_pos_fac={item.id_pos_fac}
-                                  id_emp={item.id_emp}
-                                />
-                              </TableRow>
-                            );
-                          })}
-                        </TableBody>
-                      </Table>
-                      <TableFooter>
-                        <Pagination
-                          totalResults={totalResults}
-                          resultsPerPage={resultsPerPage}
-                          onChange={onPageChangeTable}
-                          label="Table navigation"
-                        />
-                      </TableFooter>
-                    </TableContainer>
-                    // <Table
-                    //   className="p-0"
-                    //   rowKey="id"
-                    //   dataSource={facultyRecordView}
-                    //   columns={columns}
-                    //   pagination={{ pageSize: 5 }}
-                    // />
+                    <Table
+                      className="p-0"
+                      rowKey="id"
+                      dataSource={facultyRecordView}
+                      columns={columns}
+                      pagination={{ pageSize: 5 }}
+                    />
                   )}
                 </form>
               </ModalBody>

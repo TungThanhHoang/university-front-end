@@ -16,7 +16,6 @@ import {
 } from "../../redux/selector";
 import PageTitle from "../../components/Typography/PageTitle";
 import {
-  Table,
   TableHeader,
   TableCell,
   TableBody,
@@ -27,6 +26,7 @@ import {
   Button,
   Pagination,
 } from "@windmill/react-ui";
+import { Table } from "antd";
 
 import DepartmentModals from "../Department/DepartmentModals";
 import DepartmentUpdateModals from "../Department/DepartmentUpdateModal";
@@ -66,31 +66,18 @@ function DepartmentTables() {
   const resultsPerPage = 10;
   const totalResults = response?.length;
 
-//   useEffect(() => {
-//     const fetchData = async () => {
-//       try {
-//         const results = await dispatch(getDepartment());
-//         const data = unwrapResult(results);
-//         console.log(data);
-//       } catch (error) {
-//         console.log(error);
-//       }
-//     };
-//     fetchData();
-//   }, []);
-
   useEffect(() => {
-    setDataTable(
-      response?.slice(
-        (pageTable - 1) * resultsPerPage,
-        pageTable * resultsPerPage
-      )
-    );
-  }, [pageTable]);
-
-  const onPageChangeTable = (p) => {
-    setPageTable(p);
-  };
+    const fetchData = async () => {
+      try {
+        const results = await dispatch(getDepartment());
+        const data = unwrapResult(results);
+        console.log(data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    fetchData();
+  }, []);
 
   const openModalUpdate = async (id) => {
     try {
@@ -142,6 +129,53 @@ function DepartmentTables() {
     }
   };
 
+  const columns = [
+    {
+      title: "STT",
+      key: "stt",
+      render: (text, record, index) => index + 1,
+    },
+    {
+      title: "Phòng ban",
+      dataIndex: "name_dep",
+      key: "name_dep",
+      render: (_, item) => {
+        return (
+          <>
+            <p className="capitalize font-semibold">{item.name_dep}</p>
+            <p className="text-xs">{item.id_code}</p>
+          </>
+        );
+      },
+    },
+    {
+      title: "Số điện thoại",
+      dataIndex: "phone_dep",
+      key: "phone_dep",
+    },
+    {
+      title: "Miêu tả",
+      dataIndex: "descript_dep",
+      key: "descript_dep",
+    },
+    {
+      title: "Hành động",
+      dataIndex: "action",
+      key: "action",
+      render: (_, item) => {
+        return (
+          <>
+            <ActionTable
+              openModalUpdate={openModalUpdate}
+              openModalDelete={openModalDelete}
+              id={item.id_dep}
+            />
+          </>
+        );
+      },
+    },
+  ];
+
   return (
     <>
       <ToastContainer />
@@ -157,7 +191,6 @@ function DepartmentTables() {
           handleConfirmDelete={handleConfirmDelete}
           handleCloseModal={handleCloseModal}
           id={departmentId[0].id_dep}
-
         />
       )}
       <DepartmentModals isModalOpen={isModalOpen} closeModal={closeModal} />
@@ -168,58 +201,13 @@ function DepartmentTables() {
           closeModal={closeModalUpdate}
         />
       )}
-      <TableContainer className="mb-8">
-        <Table>
-          <TableHeader>
-            <tr>
-              <TableCell>STT</TableCell>
-              <TableCell>Phòng ban</TableCell>
-              <TableCell>Số điện thoại</TableCell>
-              <TableCell>Miêu tả</TableCell>
-              <TableCell>Hành động</TableCell>
-            </tr>
-          </TableHeader>
-          <TableBody>
-            {department?.map((item, i) => (
-              <TableRow key={i}>
-                <TableCell>{i + 1}</TableCell>
-                <TableCell>
-                  <div className="flex items-center text-sm">
-                    <div>
-                      <p className="font-semibold capitalize">
-                        {item.name_dep}
-                      </p>
-                      <p className="text-xs text-gray-600 dark:text-gray-400">
-                        {item.id_code}
-                      </p>
-                    </div>
-                  </div>
-                </TableCell>
-                <TableCell>
-                  <span className="text-sm">{item.phone_dep}</span>
-                </TableCell>
-                <TableCell className="">
-                  <span className="text-sm ">{item.descript_dep}</span>
-                </TableCell>
-                <ActionTable
-                  openModalUpdate={openModalUpdate}
-                  openModalDelete={openModalDelete}
-                  id={item.id_dep}
-                  viewAction={true}
-                />
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-        <TableFooter>
-          <Pagination
-            totalResults={totalResults}
-            resultsPerPage={resultsPerPage}
-            onChange={onPageChangeTable}
-            label="Table navigation"
-          />
-        </TableFooter>
-      </TableContainer>
+      <Table
+        className="p-0 dark:bg-gray-80"
+        keyRow="id"
+        dataSource={department}
+        columns={columns}
+        pagination={{ pageSize: 10 }}
+      />
     </>
   );
 }

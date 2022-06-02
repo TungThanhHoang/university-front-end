@@ -51,6 +51,7 @@ export const findJobSelector = (state) => state.job.jobRecord;
 export const findIdJobSelector = (state) => state.job.idJob;
 
 // Selector Major
+export const getMajorAllSelector = (state) => state.major.majorAll;
 export const getMajorSelector = (state) => state.major.major;
 export const findMajorSelector = (state) => state.major.majorRecord;
 export const findIdMajorSelector = (state) => state.major.idMajor;
@@ -64,6 +65,8 @@ export const findIdSubjectSelector = (state) => state.subject.idSubject;
 export const getClassSelector = (state) => state.class.class;
 export const findClassSelector = (state) => state.class.classRecord;
 export const findIdClassSelector = (state) => state.class.idClass;
+export const findClassViewSelector = (state) => state.class.classRecordView;
+export const findIdClassViewSelector = (state) => state.class.idClassView;
 
 // Selector Academic
 export const getAcademicSelector = (state) => state.academic.academic;
@@ -78,6 +81,7 @@ export const getEmployeePositionFacSelector = (state) =>
   state.employee.employeePositionFac;
 
 // Selector Student
+export const getStudentAllSelector = (state) => state.student.studentAll;
 export const getStudentSelector = (state) => state.student.student;
 export const findStudentSelector = (state) => state.student.studentRecord;
 export const findIdStudentSelector = (state) => state.student.idStudent;

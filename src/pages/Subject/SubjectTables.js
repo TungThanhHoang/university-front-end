@@ -17,7 +17,6 @@ import {
 } from "../../redux/selector";
 import PageTitle from "../../components/Typography/PageTitle";
 import {
-  Table,
   TableHeader,
   TableCell,
   TableBody,
@@ -28,6 +27,7 @@ import {
   Button,
   Pagination,
 } from "@windmill/react-ui";
+import { Table } from "antd";
 
 import SubjectModals from "../Subject/SubjectModals";
 import SubjectUpdateModals from "../Subject/SubjectUpdateModal";
@@ -134,7 +134,52 @@ function SubjectTables() {
       });
     }
   };
-
+  const columns = [
+    {
+      title: "STT",
+      key: "stt",
+      render: (text, record, index) => index + 1,
+    },
+    {
+      title: "Chuyên ngành",
+      dataIndex: "name_subject",
+      key: "name_major",
+      render: (_, item) => {
+        return (
+          <>
+            <p className="font-semibold ">{item.name_subject}</p>
+            <p className="text-xs">{item.code_subject}</p>
+          </>
+        );
+      },
+    },
+    {
+      title: "Tín chỉ",
+      dataIndex: "credit_subject",
+      key: "credit_subject",
+    },
+    {
+      title: "Khoa",
+      dataIndex: "name_fac",
+      key: "name_fac",
+    },
+    {
+      title: "Hành động",
+      dataIndex: "action",
+      key: "action",
+      render: (_, item) => {
+        return (
+          <>
+            <ActionTable
+              openModalUpdate={openModalUpdate}
+              openModalDelete={openModalDelete}
+              id={item.id_subject}
+            />
+          </>
+        );
+      },
+    },
+  ];
   return (
     <>
       <ToastContainer />
@@ -165,61 +210,13 @@ function SubjectTables() {
           faculty={faculty}
         />
       )}
-      <TableContainer className="mb-8 ">
-        <Table>
-          <TableHeader>
-            <tr>
-              <TableCell>STT</TableCell>
-              <TableCell>Môn học</TableCell>
-              <TableCell>Số tín chỉ</TableCell>
-              <TableCell>Khoa</TableCell>
-              <TableCell>Hành động</TableCell>
-            </tr>
-          </TableHeader>
-          <TableBody>
-            {subject?.map((item, i) => (
-              <TableRow key={i}>
-                <TableCell>{i + 1}</TableCell>
-                <TableCell>
-                  <div className="flex items-center text-sm">
-                    <div>
-                      <p className="font-semibold capitalize">
-                        {item.name_subject}
-                      </p>
-                      <p className="font-normal text-xs capitalize">
-                        {item.code_subject}
-                      </p>
-                    </div>
-                  </div>
-                </TableCell>
-                <TableCell>
-                  <div className="flex items-center text-sm">
-                    <p className="font-semibold capitalize">{item.credit_subject}</p>
-                  </div>
-                </TableCell>
-                <TableCell>
-                  <div className="flex items-center text-sm">
-                    <p className="font-semibold capitalize">{item.name_fac}</p>
-                  </div>
-                </TableCell>
-                <ActionTable
-                  openModalUpdate={openModalUpdate}
-                  openModalDelete={openModalDelete}
-                  id={item.id_subject}
-                />
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-        <TableFooter>
-          <Pagination
-            totalResults={totalResults}
-            resultsPerPage={resultsPerPage}
-            onChange={onPageChangeTable}
-            label="Table navigation"
-          />
-        </TableFooter>
-      </TableContainer>
+      <Table
+        className="p-0 dark:bg-gray-80"
+        keyRow="id"
+        dataSource={subject}
+        columns={columns}
+        pagination={{ pageSize: 10 }}
+      />
     </>
   );
 }

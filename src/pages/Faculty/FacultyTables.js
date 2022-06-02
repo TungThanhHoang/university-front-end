@@ -15,11 +15,10 @@ import {
   findFacultySelector,
   findIdFacultySelector,
   findFacultyViewSelector,
-  findIdFacultyViewSelector
+  findIdFacultyViewSelector,
 } from "../../redux/selector";
 import PageTitle from "../../components/Typography/PageTitle";
 import {
-  Table,
   TableHeader,
   TableCell,
   TableBody,
@@ -30,6 +29,7 @@ import {
   Button,
   Pagination,
 } from "@windmill/react-ui";
+import { Table } from "antd";
 
 import response2 from "../../utils/demo/tableData";
 import FacultyModals from "../Faculty/FacultyModals";
@@ -159,7 +159,54 @@ function FacultyTables() {
       });
     }
   };
-
+  const columns = [
+    {
+      title: "STT",
+      key: "stt",
+      render: (text, record, index) => index + 1,
+    },
+    {
+      title: "Khoa",
+      dataIndex: "name_fac",
+      key: "name_fac",
+      render: (_, item) => {
+        return (
+          <>
+            <p className="capitalize font-semibold">{item.name_fac}</p>
+            <p className="text-xs">{item.id_code}</p>
+          </>
+        );
+      },
+    },
+    {
+      title: "Số điện thoại",
+      dataIndex: "phone_fac",
+      key: "phone_fac",
+    },
+    {
+      title: "Miêu tả",
+      dataIndex: "descipt_fac",
+      key: "descipt_fac",
+    },
+    {
+      title: "Hành động",
+      dataIndex: "action",
+      key: "action",
+      render: (_, item) => {
+        return (
+          <>
+            <ActionTable
+              openModalUpdate={openModalUpdate}
+              openModalDelete={openModalDelete}
+              openModalView={openModalView}
+              viewAction={true}
+              id={item.id_fac}
+            />
+          </>
+        );
+      },
+    },
+  ];
   return (
     <>
       <ToastContainer />
@@ -191,59 +238,13 @@ function FacultyTables() {
           closeModal={closeModalUpdate}
         />
       )}
-      <TableContainer className="mb-8">
-        <Table>
-          <TableHeader>
-            <tr>
-              <TableCell>STT</TableCell>
-              <TableCell>Khoa</TableCell>
-              <TableCell>Số điện thoại</TableCell>
-              <TableCell>Miêu tả</TableCell>
-              <TableCell>Hành động</TableCell>
-            </tr>
-          </TableHeader>
-          <TableBody>
-            {faculty?.map((item, i) => (
-              <TableRow key={i}>
-                <TableCell>{i + 1}</TableCell>
-                <TableCell>
-                  <div className="flex items-center text-sm">
-                    <div>
-                      <p className="font-semibold capitalize">
-                        {item.name_fac}
-                      </p>
-                      <p className="text-xs text-gray-600 dark:text-gray-400">
-                        {item.id_code}
-                      </p>
-                    </div>
-                  </div>
-                </TableCell>
-                <TableCell>
-                  <span className="text-sm">{item.phone_fac}</span>
-                </TableCell>
-                <TableCell className="">
-                  <span className="text-sm ">{item.descipt_fac}</span>
-                </TableCell>
-                <ActionTable
-                  openModalUpdate={openModalUpdate}
-                  openModalDelete={openModalDelete}
-                  openModalView={openModalView}
-                  id={item.id_fac}
-                  viewAction={true}
-                />
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-        <TableFooter>
-          <Pagination
-            totalResults={totalResults}
-            resultsPerPage={resultsPerPage}
-            onChange={onPageChangeTable}
-            label="Table navigation"
-          />
-        </TableFooter>
-      </TableContainer>
+      <Table
+        className="p-0 dark:bg-gray-80"
+        keyRow="id"
+        dataSource={faculty}
+        columns={columns}
+        pagination={{ pageSize: 10 }}
+      />
     </>
   );
 }

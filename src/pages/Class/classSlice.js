@@ -58,15 +58,33 @@ export const updateClass = createAsyncThunk(
     }
   }
 );
-export const addClass = createAsyncThunk("class/addClass", async (data, thunkAPI) => {
-  try {
-    const flag = await localStorage.getItem("flag");
-    const response = await axios.post(`${API_URL}/class/add/${flag}`, data);
-    return response.data.data.recordset;
-  } catch (error) {
-    return thunkAPI.rejectWithValue(error.response.data);
+export const addClass = createAsyncThunk(
+  "class/addClass",
+  async (data, thunkAPI) => {
+    try {
+      const flag = await localStorage.getItem("flag");
+      const response = await axios.post(`${API_URL}/class/add/${flag}`, data);
+      return response.data.data.recordset;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.response.data);
+    }
   }
-});
+);
+
+export const findClassView = createAsyncThunk(
+  "class/findClassView",
+  async (facultyId, thunkAPI) => {
+    try {
+      const flag = await localStorage.getItem("flag");
+      const response = await axios.get(
+        `${API_URL}/class/${facultyId}/get-student/${flag}`
+      );
+      return response.data.data.recordset;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.response.data);
+    }
+  }
+);
 
 const classSlice = createSlice({
   name: "class",
@@ -75,10 +93,14 @@ const classSlice = createSlice({
     class: [],
     classRecord: null,
     idClass: null,
+    classRecordView: null,
+    idClassView: null,
   },
   reducers: {
     clearState: (state, action) => {
       state.classRecord = null;
+      state.classRecordView = null;
+      state.idClassView = null;
     },
     getClassAction: (state, action) => {
       state.class = action.payload;
@@ -91,6 +113,11 @@ const classSlice = createSlice({
     findIdDelete: (state, action) => {
       state.idClass = state.class.filter(
         (record) => record.id_class === action.payload
+      );
+    },
+    findIdView: (state, action) => {
+      state.idClassView = state.class.filter(
+        (record) => record.id_class.trim() === action.payload
       );
     },
     updateClassAction: (state, action) => {
@@ -154,6 +181,18 @@ const classSlice = createSlice({
       state.error = null;
     },
     [updateClass.rejected]: (state, action) => {
+      state.loading = false;
+      state.error = action.payload.msg;
+    },
+    [findClassView.pending]: (state, action) => {
+      state.loading = true;
+    },
+    [findClassView.fulfilled]: (state, action) => {
+      state.loading = false;
+      state.error = null;
+      state.classRecordView = action.payload;
+    },
+    [findClassView.rejected]: (state, action) => {
       state.loading = false;
       state.error = action.payload.msg;
     },

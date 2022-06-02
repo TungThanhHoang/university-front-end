@@ -2,10 +2,14 @@ import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import {
   getEmployeeSelector,
+  getStudentAllSelector,
   getUniversitySelector,
   findUniversityMainSelector,
+  getMajorAllSelector,
 } from "../../redux/selector";
 import { getEmployee } from "../Employee/employeeSlice";
+import { getMajorAll } from "../Major/majorSlice";
+import { getStudentAll } from "../Student/studentSlice";
 import {
   findUniversityMain,
   fetchUniversities,
@@ -22,23 +26,50 @@ import {
   WebIcon,
 } from "../../icons";
 import RoundIcon from "../../components/RoundIcon";
+import DetailUniversityModal from "../DetailUniversity/DetailUniversityModal";
 
 function Dashboard() {
   const dispatch = useDispatch();
   const employee = useSelector(getEmployeeSelector);
   const universityMain = useSelector(findUniversityMainSelector);
   const university = useSelector(getUniversitySelector);
+  const majorAll = useSelector(getMajorAllSelector);
+  const studentAll = useSelector(getStudentAllSelector);
+  const [isModalOpen, setIsOpenModal] = useState(false);
+
+  const handleOpenModal = () => {
+    setIsOpenModal(true);
+    console.log("1")
+  };
+  const handleCloseModal = () => {
+    setIsOpenModal(false);
+  };
+
   useEffect(() => {
     Promise.all([
       dispatch(getEmployee()),
-      dispatch(findUniversityMain(), dispatch(fetchUniversities())),
+      dispatch(
+        findUniversityMain(),
+        dispatch(fetchUniversities()),
+        dispatch(getMajorAll()),
+        dispatch(getStudentAll())
+      ),
     ]);
   }, []);
 
   return (
     <>
+      <DetailUniversityModal
+        handleOpenModal={handleOpenModal}
+        handleCloseModal={handleCloseModal}
+        isModalOpen={isModalOpen}
+      />
       <div className="mt-10 flex items-center">
-        <img className="object-cover w-16 h-16" src={universityMain[0]?.img_main} alt="" />
+        <img
+          className="object-cover w-16 h-16"
+          src={universityMain[0]?.img_main}
+          alt=""
+        />
         <div className="font-bold text-2xl ml-4 text-blue-900 uppercase">
           {universityMain[0]?.name_main}
         </div>
@@ -47,7 +78,7 @@ function Dashboard() {
       <PageTitle>Thống kê</PageTitle>
 
       {/* <!-- Cards --> */}
-      <div className="grid gap-6 mb-8 md:grid-cols-2 xl:grid-cols-4">
+      <div className="grid gap-6 mb-8 md:grid-cols-2 xl:grid-cols-4 ">
         <InfoCard title="Trường đại học thành viên" value={university.length}>
           <RoundIcon
             icon={CardsIcon}
@@ -57,7 +88,7 @@ function Dashboard() {
           />
         </InfoCard>
 
-        <InfoCard title="Chuyên ngành đào tạo" value="263">
+        <InfoCard title="Chuyên ngành đào tạo" value={majorAll.length}>
           <RoundIcon
             icon={ChartsIcon}
             iconColorClass="text-green-500 dark:text-green-100"
@@ -75,7 +106,7 @@ function Dashboard() {
           />
         </InfoCard>
 
-        <InfoCard title="Phòng ban" value="35">
+        <InfoCard title="Sinh viên" value={studentAll.length}>
           <RoundIcon
             icon={PeopleIcon}
             iconColorClass="text-teal-500 dark:text-teal-100"
@@ -86,12 +117,21 @@ function Dashboard() {
       </div>
       <PageTitle>Các đơn vị thành viên trực thuộc</PageTitle>
       <div className="grid grid-cols-1 md:grid-cols-2 col-gap-6">
-        {university?.map((item) => {
+        {university?.map((item, index) => {
           return (
-            <Card colored className="bg-white dark:bg-gray-800 mb-4 flex items-center">
-              <img className="object-cover w-20 h-20 ml-4" src={item.img_uni} alt="" />
+            <Card
+              key={index}
+              colored
+              className="bg-white dark:bg-gray-800 mb-4 flex items-center cursor-pointer hover:bg-gray-50"
+              onClick={() => handleOpenModal() }
+            >
+              <img
+                className="object-cover w-20 h-20 ml-4"
+                src={item.img_uni}
+                alt=""
+              />
               <CardBody>
-                <p className="mb-2 font-semibold text-base capitalize dark:text-white">
+                <p className="mb-2 font-semibold text-base capitalize dark:text-white ">
                   {item.name_vn_uni}
                 </p>
                 <p className="capitalize text-sm flex items-center text-gray-500 dark:text-white">

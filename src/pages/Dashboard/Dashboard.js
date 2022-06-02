@@ -68,7 +68,7 @@ function Dashboard() {
             ĐẠI HỌC ĐÀ NẴNG
           </div>
           <div className="capitalize font-bold text-lg">
-            Trường {university[0]?.name_vn_uni}
+            {university[0]?.name_vn_uni}
           </div>
         </div>
       </div>

@@ -17,7 +17,7 @@ import {
 } from "../../redux/selector";
 import PageTitle from "../../components/Typography/PageTitle";
 import {
-  Table,
+  Avatar,
   TableHeader,
   TableCell,
   TableBody,
@@ -28,7 +28,7 @@ import {
   Button,
   Pagination,
 } from "@windmill/react-ui";
-
+import { Table } from "antd";
 import StudentModals from "../Student/StudentModals";
 import StudentUpdateModals from "../Student/StudentUpdateModal";
 import { unwrapResult } from "@reduxjs/toolkit";
@@ -137,6 +137,116 @@ function StudentTables() {
     }
   };
 
+  const columns = [
+    {
+      title: "STT",
+      key: "stt",
+      render: (text, record, index) => index + 1,
+    },
+    {
+      title: "Học sinh",
+      dataIndex: "name_student",
+      key: "name_student",
+      render: (_, item) => {
+        return (
+          <>
+            <div className="flex items-center text-sm">
+              <Avatar
+                src="https://res.cloudinary.com/i-h-c-n-ng/image/upload/v1649606919/avatar_4_otwwto.png"
+                alt="Judith"
+              />
+              <div className="ml-3">
+                <p className="font-semibold ">{item.name_student}</p>
+                <p className="text-xs">{item.id_student}</p>
+              </div>
+            </div>
+          </>
+        );
+      },
+    },
+    {
+      title: "Giới tính",
+      dataIndex: "gender_student",
+      key: "gender_student",
+      render: (_, item) => {
+        return (
+          <>
+            <p className="capitalize">{item.gender_student}</p>
+          </>
+        );
+      },
+    },
+    {
+      title: "Ngày sinh",
+      dataIndex: "birthday_student",
+      key: "birthday_student",
+      render: (_, item) => {
+        return (
+          <>
+            <p className="">{formatDate(item.birthday_student)}</p>
+          </>
+        );
+      },
+    },
+    {
+      title: "Liên lạc",
+      dataIndex: "mobile_student",
+      key: "hotile",
+      render: (_, item) => {
+        return (
+          <>
+            <p className="">0{item.mobile_student}</p>
+            <p className=" ">{item.email_student}</p>
+            <p className=" ">{item.name_class}</p>
+          </>
+        );
+      },
+    },
+    {
+      title: "Chuyên ngành",
+      dataIndex: "name_major",
+      key: "name_major",
+    },
+    {
+      title: "Quê quán",
+      dataIndex: "hometown_student",
+      key: "hometown_student",
+    },
+    {
+      title: "Địa chỉ",
+      dataIndex: "address_student",
+      key: "address_student",
+    },
+    {
+      title: "Mã QR",
+      dataIndex: "image_qr",
+      key: "image_qr",
+      render: (_, item) => {
+        return (
+          <>
+            <Button size="small" layout="link">Xem</Button>
+          </>
+        );
+      },
+    },
+    {
+      title: "Liên lạc",
+      dataIndex: "mobile_student",
+      key: "hotile",
+      render: (_, item) => {
+        return (
+          <>
+            <ActionTable
+              openModalUpdate={openModalUpdate}
+              openModalDelete={openModalDelete}
+              id={item.id_student.trim()}
+            />
+          </>
+        );
+      },
+    },
+  ];
+
   return (
     <>
       <ToastContainer />
@@ -154,7 +264,11 @@ function StudentTables() {
           id={studentId[0].id_student.replace(/ /g, "")}
         />
       )}
-      <StudentModals isModalOpen={isModalOpen} closeModal={closeModal} classUni={classUni} />
+      <StudentModals
+        isModalOpen={isModalOpen}
+        closeModal={closeModal}
+        classUni={classUni}
+      />
       {studentRecord !== null && (
         <StudentUpdateModals
           isModalOpen={isModalUpdate}
@@ -163,108 +277,14 @@ function StudentTables() {
           classUni={classUni}
         />
       )}
-      <TableContainer className="mb-8">
-        <Table>
-          <TableHeader>
-            <tr>
-              <TableCell>STT</TableCell>
-              <TableCell>Tên học sinh</TableCell>
-              <TableCell>Giới tính</TableCell>
-              <TableCell>Ngày Sinh</TableCell>
-              <TableCell>Quê Quán</TableCell>
-              <TableCell>Địa chỉ hiện tại</TableCell>
-              <TableCell>Cá nhân</TableCell>
-              <TableCell>Chuyên ngành</TableCell>
-              <TableCell>Email</TableCell>
-              <TableCell>Hành động</TableCell>
-            </tr>
-          </TableHeader>
-          <TableBody>
-            {student?.map((item, i) => (
-              <TableRow key={i}>
-                <TableCell>{i + 1}</TableCell>
-                <TableCell>
-                  <div className="flex items-center text-sm">
-                    <div>
-                      <p className="font-semibold capitalize">
-                        {item.name_student}
-                      </p>
-                      <p className="text-xs text-gray-600 dark:text-gray-400">
-                        {item.id_student}
-                      </p>
-                    </div>
-                  </div>
-                </TableCell>
-                <TableCell>
-                  <div className="flex items-center text-sm">
-                    <div>
-                      <p className=" capitalize ">{item.gender_student}</p>
-                    </div>
-                  </div>
-                </TableCell>
-                <TableCell>
-                  <div className="flex items-center text-sm">
-                    <div>
-                      <p className=" capitalize">
-                        {formatDate(item.birthday_student)}
-                      </p>
-                    </div>
-                  </div>
-                </TableCell>
-                <TableCell>
-                  <div className="flex items-center text-sm">
-                    <div>
-                      <p className=" capitalize">{item.hometown_student}</p>
-                    </div>
-                  </div>
-                </TableCell>
-                <TableCell>
-                  <div className="flex items-center text-sm">
-                    <div>
-                      <p className=" capitalize">{item.address_student}</p>
-                    </div>
-                  </div>
-                </TableCell>
-                <TableCell>
-                  <div className="flex items-center text-sm">
-                    <div>
-                      <p className=" capitalize">0{item.mobile_student}</p>
-                      <p className=" text-xs capitalize">{item.name_class}</p>
-                    </div>
-                  </div>
-                </TableCell>
-                <TableCell>
-                  <div className="flex items-center text-sm">
-                    <div>
-                      <p className=" capitalize">{item.name_major}</p>
-                    </div>
-                  </div>
-                </TableCell>
-                <TableCell>
-                  <div className="flex items-center text-sm">
-                    <div>
-                      <p className="">{item.email_student}</p>
-                    </div>
-                  </div>
-                </TableCell>
-                <ActionTable
-                  openModalUpdate={openModalUpdate}
-                  openModalDelete={openModalDelete}
-                  id={item.id_student.replace(/ +(?= )/g, "")}
-                />
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-        <TableFooter>
-          <Pagination
-            totalResults={totalResults}
-            resultsPerPage={resultsPerPage}
-            onChange={onPageChangeTable}
-            label="Table navigation"
-          />
-        </TableFooter>
-      </TableContainer>
+
+      <Table
+        className="p-0 dark:bg-gray-80"
+        keyRow="id"
+        dataSource={student}
+        columns={columns}
+        pagination={{ pageSize: 10 }}
+      />
     </>
   );
 }
