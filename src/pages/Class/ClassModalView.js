@@ -1,14 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { ToastContainer, toast } from "react-toastify";
-import facultySlice, {
-  updateEmployeePositionFaculty,
-} from "../Faculty/facultySlice";
-import { getPositionFaculty } from "../Faculty/positionFacultySlice";
-import { getEmployeePositionFaculty } from "../Employee/employeeSlice";
+import classSlice, { findGpaStudent } from "../Class/classSlice";
 import {
   findIdClassViewSelector,
   findClassViewSelector,
+  findGpaStudentViewSelector,
 } from "../../redux/selector";
 import {
   Modal,
@@ -30,47 +27,27 @@ import {
 } from "@windmill/react-ui";
 import { EditIcon, TrashIcon, ViewIcon } from "../../icons/index";
 import { Table } from "antd";
+import GpaStudentModal from "./GpaStudentModal";
 function ClassModalView({ isModalOpen, closeModal }) {
   const dispatch = useDispatch();
   const classRecordView = useSelector(findClassViewSelector);
   const idClassView = useSelector(findIdClassViewSelector);
-  const [pageTable, setPageTable] = useState(1);
-  const [dataTable, setDataTable] = useState(classRecordView?.slice(0, 5));
-  const [isModalAdd, setIsModalAdd] = useState(false);
-  const [postAPI, setPostAPI] = useState({ id_emp: "", id_pos_fac: "" });
+  const idGpaStudentView = useSelector(findGpaStudentViewSelector);
+  const [isModalGpa, setIsModalGpa] = useState(false);
 
-  // const handleChangePosition = async (event, id) => {
-  //   const { value } = event.target;
-  //   Promise.all([
-  //     setPostAPI({ id_emp: id.trim(), id_pos_fac: value }),
-  //     dispatch(
-  //       classSlice.actions.updateFacultyEmployee({
-  //         id: id?.replace(/ +(?= )/g, ""),
-  //         id_pos_fac: value,
-  //       })
-  //     ),
-  //   ]);
-  // };
-
-  useEffect(() => {
-    setDataTable(
-      classRecordView?.slice(
-        (pageTable - 1) * resultsPerPage,
-        pageTable * resultsPerPage
-      )
-    );
-  }, [pageTable]);
-
-  //pagination
-  const resultsPerPage = 5;
-  const totalResults = classRecordView?.length;
-
-  const openModalAdd = () => {
-    setIsModalAdd(true);
+  const openModalGpa = (id) => {
+    try {
+      dispatch(findGpaStudent(id?.trim()));
+      dispatch(classSlice.actions.findIdGpaView(id?.trim()))
+      setIsModalGpa(true);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
-  const onPageChangeTable = (p) => {
-    setPageTable(p);
+  const closeModalGpa = () => {
+    dispatch(classSlice.actions.clearStateGpa());
+    setIsModalGpa(false);
   };
 
   const formatDate = (birthday) => {
@@ -99,7 +76,7 @@ function ClassModalView({ isModalOpen, closeModal }) {
               <div className="ml-3">
                 <p className="font-semibold ">{item.name_student}</p>
                 <p className="text-xs">{item.id_student}</p>
-              </div>  
+              </div>
             </div>
           </>
         );
@@ -152,14 +129,35 @@ function ClassModalView({ isModalOpen, closeModal }) {
       dataIndex: "address_student",
       key: "address_student",
     },
+    {
+      title: "Điểm",
+      dataIndex: "address_student",
+      key: "address_student",
+      render: (_, item) => {
+        return (
+          <>
+            <Button
+              size="small"
+              layout="outline"
+              onClick={() => openModalGpa(item.id_student?.trim())}
+            >
+              Điểm
+            </Button>
+          </>
+        );
+      },
+    },
   ];
 
   return (
     <>
       <ToastContainer />
+      {idGpaStudentView !== null && isModalGpa && (
+        <GpaStudentModal closeModal={closeModalGpa} />
+      )}
       {isModalOpen && (
-        <div className="fixed inset-0 z-40 flex items-end bg-black bg-opacity-50 sm:items-center sm:justify-center appear-done enter-done">
-          <div className="w-full px-6 py-4 overflow-hidden bg-white rounded-t-lg dark:bg-gray-800 sm:rounded-lg sm:m-4 sm:max-w-4xl appear-done enter-done">
+        <div className="fixed inset-0 z-30 flex items-end bg-black bg-opacity-50 sm:items-center sm:justify-center appear-done enter-done">
+          <div className="w-full px-6 py-4 overflow-hidden bg-white rounded-t-lg dark:bg-gray-800 sm:rounded-lg sm:m-4 sm:max-w-5xl appear-done enter-done">
             <div>
               <ModalBody>
                 <div className="flex justify-between mb-5">

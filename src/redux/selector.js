@@ -68,6 +68,12 @@ export const findIdClassSelector = (state) => state.class.idClass;
 export const findClassViewSelector = (state) => state.class.classRecordView;
 export const findIdClassViewSelector = (state) => state.class.idClassView;
 
+//Selector Gpa
+
+export const findGpaStudentViewSelector = (state) => state.class.gpaRecordView;
+export const findIdGpaViewSelector = (state) => state.class.idGpaStudentView;
+
+
 // Selector Academic
 export const getAcademicSelector = (state) => state.academic.academic;
 export const findAcademicSelector = (state) => state.academic.academicRecord;

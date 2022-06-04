@@ -180,7 +180,7 @@ function MajorTables() {
       key: "course",
     },
     {
-      title: "Liên lạc",
+      title: "Hành động",
       dataIndex: "mobile_student",
       key: "hotile",
       render: (_, item) => {
@@ -189,6 +189,8 @@ function MajorTables() {
             <ActionTable
               openModalUpdate={openModalUpdate}
               openModalDelete={openModalDelete}
+              openModalView={openModalView}
+              viewAction={true}
               id={item.id_class.trim()}
             />
           </>
