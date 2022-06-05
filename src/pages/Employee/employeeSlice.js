@@ -6,7 +6,8 @@ export const getEmployee = createAsyncThunk(
   "employee/getEmployee",
   async (data, thunkAPI) => {
     try {
-      const response = await axios.get(`${API_URL}/employee`);
+      const flag = localStorage.getItem('flag')
+      const response = await axios.get(`${API_URL}/employee/${flag?.toLowerCase()}`);
       return response.data.data.recordset;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response.data);

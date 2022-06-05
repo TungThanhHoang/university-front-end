@@ -125,6 +125,7 @@ function StudentForms({ studentForm, handleOnchange, classUni, disableId }) {
             name="email_student"
             value={email_student?.replace(/ +(?= )/g, "")}
             onChange={handleOnchange}
+            disabled={disableId}
           />
         </Label>
       </div>

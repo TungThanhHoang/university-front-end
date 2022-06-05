@@ -3,7 +3,7 @@ import { Modal, ModalHeader, ModalBody, ModalFooter , Button } from "@windmill/r
 import { useDispatch , useSelector} from "react-redux";
 import { notifyDeleteSelector } from '../../redux/selector'
 import  notifyDeleteSlice from './notifyDeleteSlice';
-function NotifyDelete({ handleConfirmDelete , handleCloseModal , id}) {
+function NotifyDelete({ handleConfirmDelete , handleCloseModal , id ,idQR}) {
   const isModalOpen = useSelector(notifyDeleteSelector)
   console.log(id);
   return (
@@ -19,7 +19,7 @@ function NotifyDelete({ handleConfirmDelete , handleCloseModal , id}) {
         >
           Hủy bỏ
         </Button>
-        <Button id={id} className="w-full sm:w-auto" onClick={() => handleConfirmDelete(id)}>Đồng ý</Button>
+        <Button id={id} className="w-full sm:w-auto" onClick={() => handleConfirmDelete(id ,idQR)}>Đồng ý</Button>
       </ModalFooter>
     </Modal>
   );

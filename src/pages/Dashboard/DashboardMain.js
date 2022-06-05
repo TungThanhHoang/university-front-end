@@ -6,13 +6,18 @@ import {
   getUniversitySelector,
   findUniversityMainSelector,
   getMajorAllSelector,
+  memberUniSelector,
 } from "../../redux/selector";
 import { getEmployee } from "../Employee/employeeSlice";
 import { getMajorAll } from "../Major/majorSlice";
 import { getStudentAll } from "../Student/studentSlice";
-import {
+
+
+
+import selectUniversitySlice, {
   findUniversityMain,
   fetchUniversities,
+  clearState,
 } from "../../components/SelectUniversity/selectUniversitySlice";
 import InfoCard from "../../components/Cards/InfoCard";
 import PageTitle from "../../components/Typography/PageTitle";
@@ -35,13 +40,14 @@ function Dashboard() {
   const university = useSelector(getUniversitySelector);
   const majorAll = useSelector(getMajorAllSelector);
   const studentAll = useSelector(getStudentAllSelector);
+  const member = useSelector(memberUniSelector);
   const [isModalOpen, setIsOpenModal] = useState(false);
-
-  const handleOpenModal = () => {
+  const handleOpenModal = async (id) => {
+    await dispatch(selectUniversitySlice.actions.findIdUniversity(id?.trim()));
     setIsOpenModal(true);
-    console.log("1")
   };
   const handleCloseModal = () => {
+    dispatch(selectUniversitySlice.actions.clearState());
     setIsOpenModal(false);
   };
 
@@ -59,11 +65,15 @@ function Dashboard() {
 
   return (
     <>
-      <DetailUniversityModal
-        handleOpenModal={handleOpenModal}
-        handleCloseModal={handleCloseModal}
-        isModalOpen={isModalOpen}
-      />
+      {member !== null && (
+        <DetailUniversityModal
+          handleOpenModal={handleOpenModal}
+          handleCloseModal={handleCloseModal}
+          isModalOpen={isModalOpen}
+          id={member[0].id_uni.trim()}
+          memberUni={member}
+        />
+      )}
       <div className="mt-10 flex items-center">
         <img
           className="object-cover w-16 h-16"
@@ -123,7 +133,7 @@ function Dashboard() {
               key={index}
               colored
               className="bg-white dark:bg-gray-800 mb-4 flex items-center cursor-pointer hover:bg-gray-50"
-              onClick={() => handleOpenModal() }
+              onClick={() => handleOpenModal(item.id_uni)}
             >
               <img
                 className="object-cover w-20 h-20 ml-4"

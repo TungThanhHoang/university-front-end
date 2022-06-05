@@ -85,6 +85,57 @@ export const loginUserUniversityMain = createAsyncThunk(
   }
 );
 
+// Login University Main
+export const getAccountStudent = createAsyncThunk(
+  "auth/getStudent",
+  async (data, thunkAPI) => {
+    const tokenUser = localStorage["user_token"];
+    if (tokenUser) {
+      setToken(tokenUser);
+    }
+    try {
+      const response = await axios.get(`${API_URL}/auth/me/student`);
+      const { id_student , email_student } = response.data.data.recordset[0];
+      localStorage.setItem("flag", email_student?.split("@")[1].split(".")[0]);
+      return response.data.data?.recordset;
+    } catch (error) {
+      setToken(null);
+      localStorage.removeItem("user_token");
+      return thunkAPI.rejectWithValue(error.response.data);
+    }
+  }
+);
+
+export const loginAccountStudent = createAsyncThunk(
+  "auth/loginStudent",
+  async (data, thunkAPI) => {
+    try {
+      const response = await axios.post(`${API_URL}/auth/login/student`, data);
+      if (response.data.success === true) {
+        localStorage.setItem("user_token", response.data.accessToken);
+      }
+      await thunkAPI.dispatch(getAccountStudent());
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.response.data);
+    }
+  }
+);
+export const registerAccountStudent = createAsyncThunk(
+  "auth/registerStudent",
+  async (data, thunkAPI) => {
+    try {
+      const response = await axios.post(`${API_URL}/auth/register/student`, data);
+      if (response.data.success === true) {
+        localStorage.setItem("user_token", response.data.accessToken);
+      }
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.response.data);
+    }
+  }
+);
+
 const authLoginSlice = createSlice({
   name: "authLogin",
   initialState: {
@@ -156,6 +207,18 @@ const authLoginSlice = createSlice({
       state.flag = action.payload[0].id_main_uni;
     },
     [getUserUniversityMain.rejected]: (state, action) => {
+      state.loading = false;
+      state.error = action.payload.msg;
+    },
+    [registerAccountStudent.pending]: (state, action) => {
+      state.loading = true;
+    },
+    [registerAccountStudent.fulfilled]: (state, action) => {
+      state.loading = false;
+      state.isAuth = true;
+      state.error = null;
+    },
+    [registerAccountStudent.rejected]: (state, action) => {
       state.loading = false;
       state.error = action.payload.msg;
     }

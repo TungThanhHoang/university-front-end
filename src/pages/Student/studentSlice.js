@@ -97,7 +97,46 @@ export const addStudent = createAsyncThunk(
     }
   }
 );
-
+export const addQR = createAsyncThunk(
+  "qr/addQR",
+  async (data, thunkAPI) => {
+    try {
+      const flag = await localStorage.getItem("flag");
+      const response = await axios.post(`${API_URL}/qr/add/${flag}`, data);
+      return response.data.data.recordset;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.response.data);
+    }
+  }
+);
+export const deleteQR = createAsyncThunk(
+  "qr/deleteQR",
+  async (employeeId, thunkAPI) => {
+    try {
+      const flag = await localStorage.getItem("flag");
+      const response = await axios.post(
+        `${API_URL}/qr/${employeeId}/delete/${flag}`
+      );
+      return response.data.data.recordset;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.response.data);
+    }
+  }
+);
+export const updateQR = createAsyncThunk(
+  "qr/deleteQR",
+  async (data, thunkAPI) => {
+    try {
+      const flag = await localStorage.getItem("flag");
+      const response = await axios.post(
+        `${API_URL}/qr/${data.id_qr}/update/${flag}` , data
+      );
+      return response.data.data.recordset;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.response.data);
+    }
+  }
+);
 const studentSlice = createSlice({
   name: "student",
   initialState: {
@@ -108,10 +147,13 @@ const studentSlice = createSlice({
     studentRecord: null,
     idStudent: null,
     idStudentPosition: null,
+    qrCode: null,
+    qrStudent: null,
   },
   reducers: {
     clearState: (state, action) => {
       state.studentRecord = null;
+      state.qrStudent = null;
     },
     getStudentAction: (state, action) => {
       state.student = action.payload;
@@ -123,6 +165,11 @@ const studentSlice = createSlice({
     },
     findIdDelete: (state, action) => {
       state.idStudent = state.student.filter(
+        (record) => record.id_student?.trim() === action.payload
+      );
+    },
+    findQRStudent: (state, action) => {
+      state.qrStudent = state.student.filter(
         (record) => record.id_student?.trim() === action.payload
       );
     },
@@ -222,6 +269,40 @@ const studentSlice = createSlice({
       state.loading = false;
       state.error = action.payload.msg;
     },
+    [addQR.pending]: (state, action) => {
+      state.loading = true;
+    },
+    [addQR.fulfilled]: (state, action) => {
+      state.loading = false;
+      state.error = null;
+      state.qrCode = action.payload
+    },
+    [addQR.rejected]: (state, action) => {
+      state.loading = false;
+      state.error = action.payload.msg;
+    },
+    [deleteQR.pending]: (state, action) => {
+      state.loading = true;
+    },
+    [deleteQR.fulfilled]: (state, action) => {
+      state.loading = false;
+      state.error = null;
+    },
+    [deleteQR.rejected]: (state, action) => {
+      state.loading = false;
+      state.error = action.payload.msg;
+    },
+    [updateQR.pending]: (state, action) => {
+      state.loading = true;
+    },
+    [updateQR.fulfilled]: (state, action) => {
+      state.loading = false;
+      state.error = null;
+    },
+    [updateQR.rejected]: (state, action) => {
+      state.loading = false;
+      state.error = action.payload.msg;
+    }
   },
 });
 

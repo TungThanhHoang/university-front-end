@@ -11,6 +11,7 @@ import classSlice from '../pages/Class/classSlice'
 import academicSlice from '../pages/Academic/academicSlice'
 import employeeSlice from '../pages/Employee/employeeSlice'
 import studentSlice from '../pages/Student/studentSlice'
+import mainSlice from '../pages/DetailUniversity/mainSlice'
 import memUniversitySlice from '../pages/MemberUniversity/memberUniversitySlice'
 import notifyDeleteSlice from '../components/NotifyDelete/notifyDeleteSlice'
 const store = configureStore({
@@ -27,6 +28,7 @@ const store = configureStore({
         academic: academicSlice.reducer,
         employee: employeeSlice.reducer,
         student: studentSlice.reducer,
+        mainSlice: mainSlice.reducer,
         memberUniversity: memUniversitySlice.reducer,
         positionFaculty: positionFacultySlice.reducer,
 

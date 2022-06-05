@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { ToastContainer, toast } from "react-toastify";
-import studentSlice, { addStudent, getStudent } from "../Student/studentSlice";
-
+import studentSlice, { addStudent, getStudent, addQR } from "../Student/studentSlice";
+import loginSlice, { registerAccountStudent } from "../Login/loginSlice";
+import QRCode from "qrcode";
 import {
   Modal,
   ModalHeader,
@@ -15,6 +16,7 @@ import { unwrapResult } from "@reduxjs/toolkit";
 
 function StudentModals({ isModalOpen, closeModal, classUni }) {
   const dispatch = useDispatch();
+  const [imgQR, setImgQR] = useState("hello word");
   const [studentForm, setStudentForm] = useState({
     id_student: "",
     name_student: "",
@@ -35,7 +37,26 @@ function StudentModals({ isModalOpen, closeModal, classUni }) {
     mobile_student,
     email_student,
   } = studentForm;
-  useEffect(() => {}, []);
+
+  let opts = {
+    errorCorrectionLevel: "Q",
+    width: 256,
+    height: 256,
+  };
+
+  QRCode.toString(
+    JSON.stringify(
+      studentForm
+    ),
+    opts
+  )
+    .then((res) => {
+      setImgQR(res);
+    })
+    .catch((err) => {
+      console.error(err);
+    });
+
   const handleOnchange = (e) => {
     setStudentForm({
       ...studentForm,
@@ -65,8 +86,9 @@ function StudentModals({ isModalOpen, closeModal, classUni }) {
         progress: undefined,
       });
     try {
-      const result = await dispatch(addStudent(studentForm));
-      const data = unwrapResult(result);
+      await dispatch(addStudent(studentForm));
+      await dispatch(addQR({ image_code: imgQR, id_student: id_student }));
+      await dispatch(registerAccountStudent({ id_student: id_student, email_student: email_student, password: "123123" , flag: email_student.split("@")[1].split(".")[0].toUpperCase() }));
       await dispatch(getStudent());
       toast.success(`Thêm Thành công`, {
         position: "top-right",

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { ToastContainer, toast } from "react-toastify";
-import { updateStudent, getStudent } from "../Student/studentSlice";
+import { updateStudent, getStudent, updateQR } from "../Student/studentSlice";
 import { findStudentSelector } from "../../redux/selector";
 import {
   Modal,
@@ -12,6 +12,8 @@ import {
 } from "@windmill/react-ui";
 import StudentForms from "../../components/StudentForm/StudentForm";
 import { unwrapResult } from "@reduxjs/toolkit";
+import QRCode from "qrcode";
+
 
 function StudentUpdateModal({ isModalOpen, closeModal, classUni }) {
   const dispatch = useDispatch();
@@ -26,8 +28,11 @@ function StudentUpdateModal({ isModalOpen, closeModal, classUni }) {
     mobile_student: `${studentRecord[0]?.mobile_student}`,
     email_student: `${studentRecord[0]?.email_student}`,
     id_class: `${studentRecord[0]?.id_class}`,
+    id_qr: `${studentRecord[0]?.id_qr}`,
   });
-
+  const [imgQR, setImgQR] = useState("hello word");
+  console.log(imgQR);
+  
   const { id_student, id_class, name_student, gender_student } = studentForm;
   const handleOnchange = (e) => {
     setStudentForm({
@@ -35,6 +40,25 @@ function StudentUpdateModal({ isModalOpen, closeModal, classUni }) {
       [e.target.name]: e.target.value,
     });
   };
+
+  let opts = {
+    errorCorrectionLevel: "Q",
+    width: 256,
+    height: 256,
+  };
+
+  QRCode.toString(
+    JSON.stringify(
+      studentForm
+    ),
+    opts
+  )
+    .then((res) => {
+      setImgQR(res);
+    })
+    .catch((err) => {
+      console.error(err);
+    });
 
   const handleUpdate = async (event) => {
     event.preventDefault();
@@ -49,8 +73,8 @@ function StudentUpdateModal({ isModalOpen, closeModal, classUni }) {
         progress: undefined,
       });
     try {
-      const result = await dispatch(updateStudent(studentForm));
-      const data = unwrapResult(result);
+      await dispatch(updateStudent(studentForm));
+      await dispatch(updateQR({ id_qr: studentRecord[0]?.id_qr, image_code: imgQR }));
       await dispatch(getStudent());
       toast.success(`Cập nhật Thành công`, {
         position: "top-right",

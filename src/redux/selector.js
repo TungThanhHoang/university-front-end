@@ -6,6 +6,8 @@ export const findUniversitySelector = (state) =>
   state.selectUniversity.universityId;
 export const getSelectUniversitySelector = (state) =>
   state.selectUniversity.select;
+export const memberUniSelector = (state) =>
+  state.selectUniversity.memberUniversity;
 
 //
 export const getMemUniversitySelector = (state) =>
@@ -73,7 +75,6 @@ export const findIdClassViewSelector = (state) => state.class.idClassView;
 export const findGpaStudentViewSelector = (state) => state.class.gpaRecordView;
 export const findIdGpaViewSelector = (state) => state.class.idGpaStudentView;
 
-
 // Selector Academic
 export const getAcademicSelector = (state) => state.academic.academic;
 export const findAcademicSelector = (state) => state.academic.academicRecord;
@@ -89,7 +90,17 @@ export const getEmployeePositionFacSelector = (state) =>
 // Selector Student
 export const getStudentAllSelector = (state) => state.student.studentAll;
 export const getStudentSelector = (state) => state.student.student;
+export const getQRSelector = (state) => state.student.qrStudent;
 export const findStudentSelector = (state) => state.student.studentRecord;
 export const findIdStudentSelector = (state) => state.student.idStudent;
 export const getStudentPositionFacSelector = (state) =>
   state.student.studentPositionFac;
+
+// Main Uni
+
+export const getDepSelector = (state) => state.mainSlice.department;
+export const getFacSelector = (state) => state.mainSlice.faculty;
+export const getSubSelector = (state) => state.mainSlice.subject;
+export const getMaSelector = (state) => state.mainSlice.major;
+export const getstuSelector = (state) => state.mainSlice.student;
+export const getEmpSelector = (state) => state.mainSlice.employee;

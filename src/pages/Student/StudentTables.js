@@ -6,6 +6,8 @@ import studentSlice, {
   deleteStudent,
   updateStudent,
   findStudent,
+  findQRStudent,
+  deleteQR
 } from "./studentSlice";
 import { getClass } from "../Class/classSlice";
 import notifyDeleteSlice from "../../components/NotifyDelete/notifyDeleteSlice";
@@ -14,6 +16,7 @@ import {
   getClassSelector,
   findStudentSelector,
   findIdStudentSelector,
+  getQRSelector
 } from "../../redux/selector";
 import PageTitle from "../../components/Typography/PageTitle";
 import {
@@ -34,6 +37,7 @@ import StudentUpdateModals from "../Student/StudentUpdateModal";
 import { unwrapResult } from "@reduxjs/toolkit";
 import NotifyDelete from "../../components/NotifyDelete/NotifyDelete";
 import ActionTable from "../../components/ActionTable";
+import StudentQRModal from "./StudentQRModal";
 
 function StudentTables() {
   const dispatch = useDispatch();
@@ -41,10 +45,10 @@ function StudentTables() {
   const classUni = useSelector(getClassSelector);
   const studentRecord = useSelector(findStudentSelector);
   const studentId = useSelector(findIdStudentSelector);
+  const qrCode = useSelector(getQRSelector);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isModalUpdate, setIsModalUpdate] = useState(false);
-  const [pageTable, setPageTable] = useState(1);
-  const [dataTable, setDataTable] = useState([]);
+  const [isModalQR, setISModalQR] = useState(false);
 
   function openModal() {
     setIsModalOpen(true);
@@ -52,6 +56,15 @@ function StudentTables() {
 
   function closeModal() {
     setIsModalOpen(false);
+  }
+  function openModaQR(id) {
+    dispatch(studentSlice.actions.findQRStudent(id.trim()))
+    setISModalQR(true);
+  }
+
+  function closeModalQR() {
+    dispatch(studentSlice.actions.clearState());
+    setISModalQR(false);
   }
 
   function closeModalUpdate() {
@@ -62,23 +75,6 @@ function StudentTables() {
   useEffect(() => {
     Promise.all([dispatch(getStudent()), dispatch(getClass())]);
   }, []);
-
-  useEffect(() => {
-    setDataTable(
-      student?.slice(
-        (pageTable - 1) * resultsPerPage,
-        pageTable * resultsPerPage
-      )
-    );
-  }, [pageTable]);
-
-  // pagination setup
-  const resultsPerPage = 10;
-  const totalResults = student?.length;
-
-  const onPageChangeTable = (p) => {
-    setPageTable(p);
-  };
 
   const openModalUpdate = async (id) => {
     try {
@@ -108,10 +104,10 @@ function StudentTables() {
     return data.toLocaleDateString();
   };
 
-  const handleConfirmDelete = async (id) => {
+  const handleConfirmDelete = async (id, idQR) => {
     try {
-      const results = await dispatch(deleteStudent(id));
-      const data = unwrapResult(results);
+      await dispatch(deleteStudent(id));
+      await dispatch(deleteQR(idQR));
       await dispatch(studentSlice.actions.deleteStudentAction(id));
       handleCloseModal();
       toast.success(`Xóa Thành công`, {
@@ -224,7 +220,7 @@ function StudentTables() {
       render: (_, item) => {
         return (
           <>
-            <Button size="small" layout="link">Xem</Button>
+            <Button size="small" layout="link" onClick={() => openModaQR(item.id_student?.trim())} >Xem</Button>
           </>
         );
       },
@@ -256,12 +252,13 @@ function StudentTables() {
           <Button onClick={openModal}>Thêm sinh viên</Button>
         </div>
       </PageTitle>
-
+      { qrCode !== null && <StudentQRModal isModalOpen={isModalQR} closeModal={closeModalQR} /> }
       {studentId !== null && (
         <NotifyDelete
           handleConfirmDelete={handleConfirmDelete}
           handleCloseModal={handleCloseModal}
           id={studentId[0].id_student.replace(/ /g, "")}
+          idQR={studentId[0]?.id_qr}
         />
       )}
       <StudentModals
