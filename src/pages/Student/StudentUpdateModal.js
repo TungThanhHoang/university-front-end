@@ -31,7 +31,6 @@ function StudentUpdateModal({ isModalOpen, closeModal, classUni }) {
     id_qr: `${studentRecord[0]?.id_qr}`,
   });
   const [imgQR, setImgQR] = useState("hello word");
-  console.log(imgQR);
   
   const { id_student, id_class, name_student, gender_student } = studentForm;
   const handleOnchange = (e) => {

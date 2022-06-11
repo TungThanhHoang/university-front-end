@@ -61,6 +61,16 @@ function MemberUniversityForms({ memUniForm, handleOnchange }) {
           />
         </Label>
         <Label>
+          <span>Website</span>
+          <Input
+            className="mt-1"
+            placeholder="Website"
+            name="website_uni"
+            value={website_uni?.replace(/ +(?= )/g, "")}
+            onChange={handleOnchange}
+          />
+        </Label>
+        <Label>
           <span className="capitalize">ảnh</span>
           <Input
             className="mt-1"

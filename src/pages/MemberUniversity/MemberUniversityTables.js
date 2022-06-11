@@ -164,7 +164,7 @@ function MemberUniversityTables() {
                 <TableCell>
                   <div className="flex items-center text-sm">
                     <div>
-                      <p className=" capitalize">{item.phone_uni}</p>
+                      <p className=" capitalize">0{item.phone_uni}</p>
                     </div>
                   </div>
                 </TableCell>

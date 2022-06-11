@@ -148,11 +148,11 @@ function StudentTables() {
           <>
             <div className="flex items-center text-sm">
               <Avatar
-                src="https://res.cloudinary.com/i-h-c-n-ng/image/upload/v1649606919/avatar_4_otwwto.png"
+                src="https://res.cloudinary.com/i-h-c-n-ng/image/upload/v1654783474/avatar_1_i1hgqr.png"
                 alt="Judith"
               />
               <div className="ml-3">
-                <p className="font-semibold ">{item.name_student}</p>
+                <p className="font-semibold capitalize">{item.name_student}</p>
                 <p className="text-xs">{item.id_student}</p>
               </div>
             </div>

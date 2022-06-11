@@ -39,7 +39,7 @@ function StudentForms({ studentForm, handleOnchange, classUni, disableId }) {
         <Label className="mt-4">
           <span>Tên sinh viên</span>
           <Input
-            className="mt-1"
+            className="mt-1 capitalize"
             placeholder="Tên sinh viên"
             name="name_student"
             value={name_student?.replace(/ +(?= )/g, "")}
@@ -77,7 +77,7 @@ function StudentForms({ studentForm, handleOnchange, classUni, disableId }) {
           <span>Ngày sinh</span>
           <Input
             className="mt-1"
-            placeholder="1990/01/10"
+            placeholder="10/10/2000"
             name="birthday_student"
             value={birthday_student ? formatDate(birthday_student?.replace(/ +(?= )/g, "")) : ""}
             onChange={handleOnchange}

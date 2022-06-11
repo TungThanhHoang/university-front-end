@@ -35,7 +35,7 @@ function EmployeeForms({ employeeForm, handleOnchange , job , academic}) {
         <Label className="mt-4">
           <span>Tên nhân viên</span>
           <Input
-            className="mt-1"
+            className="mt-1 capitalize"
             placeholder="Tên nhân viên"
             name="name_emp"
             value={name_emp?.replace(/ +(?= )/g, "")}

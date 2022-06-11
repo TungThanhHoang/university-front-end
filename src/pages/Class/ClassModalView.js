@@ -74,8 +74,8 @@ function ClassModalView({ isModalOpen, closeModal }) {
                 alt="Judith"
               />
               <div className="ml-3">
-                <p className="font-semibold ">{item.name_student}</p>
-                <p className="text-xs">{item.id_student}</p>
+                <p className="font-semibold capitalize ">{item.name_student}</p>
+                <p className="text-xs capitalize">{item.id_student}</p>
               </div>
             </div>
           </>

@@ -233,6 +233,7 @@ const studentSlice = createSlice({
     },
     [addStudent.rejected]: (state, action) => {
       state.loading = false;
+      
       state.error = action.payload.msg;
     },
     [deleteStudent.pending]: (state, action) => {

@@ -151,7 +151,7 @@ function Dashboard() {
                 <div className="flex mt-2">
                   <p className="flex items-center text-gray-500 dark:text-white">
                     <PhoneIcon />
-                    <span className="text-sm ml-2">{item.phone_uni}</span>
+                    <span className="text-sm ml-2">0{item.phone_uni}</span>
                   </p>
                   <p className="flex items-center ml-4 text-gray-500 dark:text-white">
                     <WebIcon />

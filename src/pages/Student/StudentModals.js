@@ -86,24 +86,27 @@ function StudentModals({ isModalOpen, closeModal, classUni }) {
         progress: undefined,
       });
     try {
-      await dispatch(addStudent(studentForm));
-      await dispatch(addQR({ image_code: imgQR, id_student: id_student }));
-      await dispatch(registerAccountStudent({ id_student: id_student, email_student: email_student, password: "123123" , flag: email_student.split("@")[1].split(".")[0].toUpperCase() }));
-      await dispatch(getStudent());
-      toast.success(`Thêm Thành công`, {
-        position: "top-right",
-        autoClose: 3000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-      });
-      closeModal();
-      setStudentForm("");
+      const response = await dispatch(addStudent(studentForm));
+      const result = unwrapResult(response);
+      if (response.type === "student/addStudent/fulfilled") {
+        await dispatch(addQR({ image_code: imgQR, id_student: id_student }));
+        await dispatch(registerAccountStudent({ id_student: id_student, email_student: email_student, password: "123123", flag: email_student.split("@")[1].split(".")[0].toUpperCase() }));
+        await dispatch(getStudent());
+        toast.success(`Thêm Thành công`, {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
+        closeModal();
+        setStudentForm("");
+      }
     } catch (error) {
-      console.log(error);
-      toast.error(`${error.msg}`, {
+      console.log(error.msg);
+      return toast.error(`${error.msg}`, {
         position: "top-right",
         autoClose: 3000,
         hideProgressBar: false,

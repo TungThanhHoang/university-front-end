@@ -86,6 +86,20 @@ export const findClassView = createAsyncThunk(
   }
 );
 
+export const getGpa = createAsyncThunk(
+  "class/getGpa",
+  async (gpa, thunkAPI) => {
+    try {
+      const flag = await localStorage.getItem("flag");
+      const response = await axios.get(
+        `${API_URL}/gpa/${flag}`
+      );
+      return response.data.data.recordset;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.response.data);
+    }
+  }
+);
 export const addGpaStudent = createAsyncThunk(
   "class/addGpaStudent",
   async (gpa, thunkAPI) => {
@@ -140,6 +154,7 @@ const classSlice = createSlice({
     idClassView: null,
     gpaRecordView: null,
     idGpaStudentView: null,
+    gpa: null,
   },
   reducers: {
     clearState: (state, action) => {
@@ -285,6 +300,18 @@ const classSlice = createSlice({
       state.error = null;
     },
     [deleteGpaStudent.rejected]: (state, action) => {
+      state.loading = false;
+      state.error = action.payload.msg;
+    },
+    [getGpa.pending]: (state, action) => {
+      state.loading = true;
+    },
+    [getGpa.fulfilled]: (state, action) => {
+      state.loading = false;
+      state.error = null;
+      state.gpa = action.payload;
+    },
+    [getGpa.rejected]: (state, action) => {
       state.loading = false;
       state.error = action.payload.msg;
     },
